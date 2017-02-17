@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
 import to.us.tf.DeathSpectating.listeners.DeathListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
@@ -199,7 +200,11 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (killer == player) //Though we don't care if they did it themselves
                 killer = null;
 
-        /*Start death spectating!*/
+            //Clear potion effects
+            for (PotionEffect potionEffect : player.getActivePotionEffects())
+                player.removePotionEffect(potionEffect.getType());
+
+            /*Start death spectating!*/
             SpectateTask task = new SpectateTask(player, getRespawnTicks(), killer, this);
             getServer().getPluginManager().callEvent(new DeathSpectatingEvent(task));
             task.runTaskTimer(this, 1L, 1L);
