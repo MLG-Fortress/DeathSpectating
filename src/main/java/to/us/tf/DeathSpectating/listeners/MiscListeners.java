@@ -71,10 +71,9 @@ public class MiscListeners implements Listener
         {
             String command = event.getMessage().split(" ")[0]; //Got a more efficient/better way? Let me know/PR it!
             command = command.substring(1, command.length()); //Remove slash
-            if (configManager.isWhitelistedCommand(command))
-                return;
+            if (!configManager.isWhitelistedCommand(command))
+                event.setCancelled(true);
         }
-            event.setCancelled(true);
     }
 
     /**
