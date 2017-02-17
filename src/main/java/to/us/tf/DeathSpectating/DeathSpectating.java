@@ -2,6 +2,7 @@ package to.us.tf.DeathSpectating;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
@@ -21,6 +22,8 @@ import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Robo on 2/15/2017.
@@ -138,8 +141,16 @@ public class DeathSpectating extends JavaPlugin implements Listener
         if (expToDrop > 100)
             expToDrop = 100;
 
+        //Compile a list of null-free/air-free items to drop
+        List<ItemStack> itemsToDrop = new LinkedList<>();
+        for (ItemStack itemStack : player.getInventory().getContents())
+        {
+            if (itemStack != null && itemStack.getType() != Material.AIR)
+                itemsToDrop.add(itemStack);
+        }
+
         /*Fire PlayerDeathEvent*/
-        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, Arrays.asList(player.getInventory().getContents()), expToDrop, null);
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, null);
         getServer().getPluginManager().callEvent(deathEvent);
 
         //Print death message
