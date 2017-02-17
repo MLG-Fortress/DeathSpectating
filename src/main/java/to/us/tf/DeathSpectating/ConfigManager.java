@@ -37,6 +37,7 @@ public class ConfigManager
         config.addDefault("worldWhitelist", whitelist);
         List<String> cmdWhitelist = new ArrayList<>(Arrays.asList("me", "m", "msg", "message", "t", "tell", "w", "whisper", "list"));
         config.addDefault("commandWhitelist", cmdWhitelist);
+        config.options().copyDefaults(true);
         instance.saveConfig();
         respawnTicks = (long)(config.getDouble("respawnTimeInSeconds") / 20D);
         usePermissionForSpectating = config.getBoolean("usePermissionForSpectating");
