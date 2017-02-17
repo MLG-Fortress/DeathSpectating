@@ -1,4 +1,4 @@
-package us.to.tf.DeathSpectating.listeners;
+package to.us.tf.DeathSpectating.listeners;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import us.to.tf.DeathSpectating.DeathSpectating;
+import to.us.tf.DeathSpectating.DeathSpectating;
 
 /**
  * Created on 2/15/2017.

@@ -1,4 +1,4 @@
-package us.to.tf.DeathSpectating;
+package to.us.tf.DeathSpectating;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,10 +15,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import us.to.tf.DeathSpectating.events.DeathSpectatingEvent;
-import us.to.tf.DeathSpectating.listeners.DeathListener;
-import us.to.tf.DeathSpectating.listeners.MiscListeners;
-import us.to.tf.DeathSpectating.tasks.SpectateTask;
+import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
+import to.us.tf.DeathSpectating.listeners.DeathListener;
+import to.us.tf.DeathSpectating.listeners.MiscListeners;
+import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.Arrays;
 

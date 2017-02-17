@@ -1,8 +1,8 @@
-package us.to.tf.DeathSpectating.events;
+package to.us.tf.DeathSpectating.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import us.to.tf.DeathSpectating.tasks.SpectateTask;
+import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 /**
  * @author RoboMWM

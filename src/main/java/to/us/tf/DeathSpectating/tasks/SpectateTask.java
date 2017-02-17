@@ -1,10 +1,10 @@
-package us.to.tf.DeathSpectating.tasks;
+package to.us.tf.DeathSpectating.tasks;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import us.to.tf.DeathSpectating.DeathSpectating;
+import to.us.tf.DeathSpectating.DeathSpectating;
 
 import javax.annotation.Nullable;
 

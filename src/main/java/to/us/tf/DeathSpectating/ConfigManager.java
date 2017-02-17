@@ -1,4 +1,4 @@
-package us.to.tf.DeathSpectating;
+package to.us.tf.DeathSpectating;
 
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -1,4 +1,4 @@
-package us.to.tf.DeathSpectating;
+package to.us.tf.DeathSpectating;
 
 /*
  * From https://github.com/drtshock/Essentials/blob/2.x/Essentials/src/com/earth2me/essentials/craftbukkit/SetExpFix.java

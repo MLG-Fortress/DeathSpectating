@@ -1,4 +1,4 @@
-package us.to.tf.DeathSpectating.listeners;
+package to.us.tf.DeathSpectating.listeners;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import us.to.tf.DeathSpectating.ConfigManager;
-import us.to.tf.DeathSpectating.DeathSpectating;
+import to.us.tf.DeathSpectating.ConfigManager;
+import to.us.tf.DeathSpectating.DeathSpectating;
 
 /**
  * Created on 2/15/2017.
