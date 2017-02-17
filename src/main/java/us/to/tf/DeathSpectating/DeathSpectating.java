@@ -17,6 +17,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.to.tf.DeathSpectating.events.DeathSpectatingEvent;
 import us.to.tf.DeathSpectating.listeners.DeathListener;
+import us.to.tf.DeathSpectating.listeners.MiscListeners;
 import us.to.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.Arrays;
@@ -44,11 +45,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
     public long getRespawnTicks()
     {
         return configManager.getRespawnTicks();
-    }
-
-    public boolean canSpectate(Player player)
-    {
-        return configManager.isWhitelistedWorld(player.getWorld()) && configManager.hasPermissionToSpectate(player);
     }
 
     public boolean isSpectatingTeleportEnabled(Player player)

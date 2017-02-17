@@ -9,11 +9,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import us.to.tf.DeathSpectating.DeathSpectating;
 
 /**
- * Created by Robo on 2/15/2017.
+ * Created on 2/15/2017.
+ * @author RoboMWM
  */
 public class DeathListener implements Listener
 {
     DeathSpectating instance;
+
     public DeathListener(DeathSpectating deathSpectating)
     {
         instance = deathSpectating;
@@ -27,7 +29,7 @@ public class DeathListener implements Listener
 
         Player player = (Player)event.getEntity();
 
-        if (!instance.canSpectate(player))
+        if (!instance.getConfigManager().canSpectate(player))
             return;
 
         //Check if player would be dead or not because of this

@@ -17,8 +17,8 @@ import java.util.Set;
  */
 public class ConfigManager
 {
-    DeathSpectating instance;
-    FileConfiguration config;
+    private DeathSpectating instance;
+    private FileConfiguration config;
     private long respawnTicks = 160L; //8 seconds
     private Set<World> whitelistedWorlds;
     private Set<String> whitelistedCommands = new HashSet<>();
@@ -63,16 +63,6 @@ public class ConfigManager
         return respawnTicks;
     }
 
-    public boolean isWhitelistedWorld(World world)
-    {
-        return whitelistedWorlds == null || whitelistedWorlds.contains(world);
-    }
-
-    public boolean hasPermissionToSpectate(Player player)
-    {
-        return !usePermissionForSpectating || player.hasPermission("deathspectating.spectate");
-    }
-
     public boolean canSpectatorTeleport(Player player)
     {
         return player.hasPermission("deathspectating.teleport");
@@ -81,6 +71,23 @@ public class ConfigManager
     public boolean isWhitelistedCommand(String command)
     {
         return whitelistedCommands.contains(command);
+    }
+
+    public boolean canSpectate(Player player)
+    {
+        return isWhitelistedWorld(player.getWorld()) && hasPermissionToSpectate(player);
+    }
+
+    /*Private methods, for now*/
+
+    private boolean isWhitelistedWorld(World world)
+    {
+        return whitelistedWorlds == null || whitelistedWorlds.contains(world);
+    }
+
+    private boolean hasPermissionToSpectate(Player player)
+    {
+        return !usePermissionForSpectating || player.hasPermission("deathspectating.spectate");
     }
 
 }
