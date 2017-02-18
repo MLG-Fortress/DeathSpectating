@@ -3,6 +3,7 @@ package to.us.tf.DeathSpectating;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
@@ -22,6 +23,7 @@ import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -144,13 +146,17 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (expToDrop > 100)
                 expToDrop = 100;
 
-            //Compile a list of null-free/air-free items to drop
-            List<ItemStack> itemsToDrop = new LinkedList<>();
-            for (ItemStack itemStack : player.getInventory().getContents())
+            List<ItemStack> itemsToDrop = new ArrayList<>(player.getInventory().getSize());
+            if (Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory")))
             {
-                if (itemStack != null && itemStack.getType() != Material.AIR)
-                    itemsToDrop.add(itemStack);
+                //Compile a list of null-free/air-free items to drop
+                for (ItemStack itemStack : player.getInventory().getContents())
+                {
+                    if (itemStack != null && itemStack.getType() != Material.AIR && itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
+                        itemsToDrop.add(itemStack);
+                }
             }
+
 
         /*Fire PlayerDeathEvent*/
             PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, null);
