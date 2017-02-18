@@ -71,7 +71,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @param spectate
      * */
-    private void setSpectating(Player player, boolean spectate)
+    public void setSpectating(Player player, boolean spectate)
     {
         if (spectate)
         {
@@ -94,7 +94,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             return false;
         setSpectating(player, false);
 
-        //TODO: Non-Vanilla behavior - Not notifying player if "bed is missing or obstructed"
+        //TODO: Non-Vanilla behavior - can't determine whether to tell player their "bed is missing or obstructed" (Issue #12)
         //Reason: No non-CB/NMS way to determine if player has set a bed spawn before or not.
         //There is respawnLocation or similar method inside of CraftPlayer, including whether "bed spawn" is forced or not
 

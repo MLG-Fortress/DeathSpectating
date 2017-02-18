@@ -39,7 +39,7 @@ public class ConfigManager
         config.addDefault("respawnTimeInSeconds", 8);
         config.addDefault("usePermissionForSpectating", false);
         config.addDefault("useDamageCauseBlacklist", true);
-        List<String> dCBL = new ArrayList<>(Arrays.asList("SUFFOCATION", "SUICIDE"));
+        List<String> dCBL = new ArrayList<>(Arrays.asList("SUFFOCATION"));
         config.addDefault("damageCauseBlacklist", dCBL);
         config.addDefault("useWorldWhitelist", false);
         List<String> whitelist = new ArrayList<>();

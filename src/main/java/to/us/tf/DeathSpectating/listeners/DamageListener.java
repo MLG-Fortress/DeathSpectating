@@ -33,7 +33,13 @@ public class DamageListener implements Listener
             return;
 
         //Check if player would be dead or not because of this
-        if (event.getFinalDamage() < player.getHealth())
+        if (player.getHealth() > event.getFinalDamage())
+            return;
+
+        //Ignore if this is probably the result of the Essentials suicide command
+        //Essentials will perform Player#setHealth(0), which does not fire a damage event, but does kill the player. This will lead to a double death message.
+        if ((event.getCause() == EntityDamageEvent.DamageCause.CUSTOM || event.getCause() == EntityDamageEvent.DamageCause.SUICIDE)
+                && event.getDamage() == Short.MAX_VALUE)
             return;
 
         player.setLastDamageCause(event);

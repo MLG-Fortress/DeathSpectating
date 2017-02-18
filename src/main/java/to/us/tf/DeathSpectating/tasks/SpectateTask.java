@@ -54,6 +54,9 @@ public class SpectateTask extends BukkitRunnable
 
     public void run()
     {
+        if (player.isDead() && instance.isSpectating(player)) //A plugin (e.g. Essentials) did Player#setHealth(0)
+            instance.setSpectating(player, false);
+
         if (!instance.isSpectating(player))
         {
             this.cancel();
