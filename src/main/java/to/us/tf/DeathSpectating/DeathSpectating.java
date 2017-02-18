@@ -1,9 +1,12 @@
 package to.us.tf.DeathSpectating;
 
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -21,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
 import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
@@ -199,7 +203,9 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
 
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
-            //TODO: Non-vanilla behavior: Smoke effect after 20 ticks (Issue #14)
+            //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
+            if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
+                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25);
 
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
