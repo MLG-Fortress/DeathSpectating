@@ -3,6 +3,7 @@ package to.us.tf.DeathSpectating;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +21,9 @@ public class ConfigManager
     private DeathSpectating instance;
     private FileConfiguration config;
     private long respawnTicks = 160L; //8 seconds
-    private Set<World> whitelistedWorlds;
+    private Set<World> whitelistedWorlds = new HashSet<>();
     private Set<String> whitelistedCommands = new HashSet<>();
+    private Set<EntityDamageEvent.DamageCause> blacklistedDamageCauses = new HashSet<>();
     private boolean usePermissionForSpectating = false;
 
     ConfigManager(DeathSpectating deathSpectating)
@@ -30,20 +32,35 @@ public class ConfigManager
         config = instance.getConfig();
         config.addDefault("respawnTimeInSeconds", 8);
         config.addDefault("usePermissionForSpectating", false);
+        config.addDefault("useDamageCauseBlacklist", true);
+        List<String> dCBL = new ArrayList<>(Arrays.asList("SUFFOCATION", "SUICIDE"));
+        config.addDefault("damageCauseBlacklist", dCBL);
         config.addDefault("useWorldWhitelist", false);
         List<String> whitelist = new ArrayList<>();
         for (World world : instance.getServer().getWorlds())
             whitelist.add(world.getName());
         config.addDefault("worldWhitelist", whitelist);
-        List<String> cmdWhitelist = new ArrayList<>(Arrays.asList("me", "m", "msg", "message", "t", "tell", "w", "whisper", "list"));
+        List<String> cmdWhitelist = new ArrayList<>(Arrays.asList("me", "m", "msg", "message", "t", "tell", "w", "whisper", "list", "help", "?", "info", "report"));
         config.addDefault("commandWhitelist", cmdWhitelist);
+
         config.options().copyDefaults(true);
         instance.saveConfig();
+
         respawnTicks = (long)(config.getDouble("respawnTimeInSeconds") * 20L);
         usePermissionForSpectating = config.getBoolean("usePermissionForSpectating");
+        if (config.getBoolean("useDamageCauseBlacklist"))
+        {
+            for (String causeString : config.getStringList("damageCauseBlacklist"))
+            {
+                EntityDamageEvent.DamageCause damageCause = EntityDamageEvent.DamageCause.valueOf(causeString.toUpperCase());
+                if (damageCause == null)
+                    instance.getLogger().warning(causeString + " is not a valid DamageCause.");
+                else
+                    blacklistedDamageCauses.add(damageCause);
+            }
+        }
         if (config.getBoolean("useWorldWhitelist"))
         {
-            whitelistedWorlds = new HashSet<>();
             for (String worldName : config.getStringList("worldWhitelist"))
             {
                 World world = instance.getServer().getWorld(worldName);
@@ -74,16 +91,16 @@ public class ConfigManager
         return whitelistedCommands.contains(command);
     }
 
-    public boolean canSpectate(Player player)
+    public boolean canSpectate(Player player, EntityDamageEvent.DamageCause damageCause)
     {
-        return isWhitelistedWorld(player.getWorld()) && hasPermissionToSpectate(player);
+        return damageCause != null && isWhitelistedWorld(player.getWorld()) && !blacklistedDamageCauses.contains(damageCause);
     }
 
     /*Private methods, for now*/
 
     private boolean isWhitelistedWorld(World world)
     {
-        return whitelistedWorlds == null || whitelistedWorlds.contains(world);
+        return whitelistedWorlds.isEmpty() || whitelistedWorlds.contains(world);
     }
 
     private boolean hasPermissionToSpectate(Player player)

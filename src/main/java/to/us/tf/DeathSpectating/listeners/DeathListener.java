@@ -29,7 +29,7 @@ public class DeathListener implements Listener
 
         Player player = (Player)event.getEntity();
 
-        if (!instance.getConfigManager().canSpectate(player))
+        if (!instance.getConfigManager().canSpectate(player, event.getCause()))
             return;
 
         //Check if player would be dead or not because of this
