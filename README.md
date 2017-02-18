@@ -1,7 +1,7 @@
 # DeathSpectating
 When a player dies, they will "watch" ("spectate") their killer the moment they die for a brief period of time before respawning. This is similar to most FPS games.
 
-[Documentation](https://github.com/MLG-Fortress/DeathSpectating/wiki)
+[Documentation](https://github.com/MLG-Fortress/DeathSpectating/wiki) | [Issues](https://github.com/MLG-Fortress/DeathSpectating/issues)
 
 Video: https://www.youtube.com/watch?v=NLXQV4Ff1jY
 
