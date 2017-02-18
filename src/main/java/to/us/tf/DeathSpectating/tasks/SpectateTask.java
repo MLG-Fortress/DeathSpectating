@@ -63,7 +63,7 @@ public class SpectateTask extends BukkitRunnable
             return;
         }
 
-        if (ticks < 2)
+        if (ticks < 1)
         {
             instance.respawnPlayer(player);
             this.cancel();

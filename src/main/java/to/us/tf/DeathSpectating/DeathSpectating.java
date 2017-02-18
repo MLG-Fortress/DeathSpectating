@@ -154,7 +154,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 expToDrop = 100;
 
             List<ItemStack> itemsToDrop = new ArrayList<>(player.getInventory().getSize());
-            if (keepInventory)
+            if (!keepInventory)
             {
                 //Compile a list of null-free/air-free items to drop
                 for (ItemStack itemStack : player.getInventory().getContents())
