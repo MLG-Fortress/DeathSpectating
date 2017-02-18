@@ -25,7 +25,7 @@ public class ConfigManager
 {
     private DeathSpectating instance;
     private FileConfiguration config;
-    private long respawnTicks = 160L; //8 seconds
+    private long respawnTicks = 120L;
     private Map<String, String> messages = new HashMap<>();
     private Set<World> whitelistedWorlds = new HashSet<>();
     private Set<String> whitelistedCommands = new HashSet<>();
@@ -36,7 +36,7 @@ public class ConfigManager
     {
         instance = deathSpectating;
         config = instance.getConfig();
-        config.addDefault("respawnTimeInSeconds", 8);
+        config.addDefault("respawnTimeInSeconds", 6);
         config.addDefault("usePermissionForSpectating", false);
         config.addDefault("useDamageCauseBlacklist", true);
         List<String> dCBL = new ArrayList<>(Arrays.asList("SUFFOCATION", "SUICIDE"));
@@ -96,6 +96,7 @@ public class ConfigManager
         if (messageSection.getStringList("deniedCommand") == null)
             messageSection.set("deniedCommand", "&cYou are not allowed to use that command while death spectating.");
         messages.put("deniedCommand", formatter(messageSection.getString("deniedCommand")));
+        config.set("messages", messageSection);
         instance.saveConfig();
     }
 
