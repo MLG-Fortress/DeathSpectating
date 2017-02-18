@@ -142,6 +142,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             /*Start Death simulation*/
 
             boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory"));
+            boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
 
             //+phoenix616: RoboMWM: it will drop level * 7 exp and 100 as a maximum
             //see https://minecraft.gamepedia.com/Health#Death
@@ -167,7 +168,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             getServer().getPluginManager().callEvent(deathEvent);
 
             //Print death message
-            if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty())
+            if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
 
             //Clear and drop items
