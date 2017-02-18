@@ -93,7 +93,7 @@ public class ConfigManager
         if (messageSection.getString("spectating") == null)
             messageSection.set("spectating", "&cYou died! Respawning in {0} seconds.");
         messages.put("spectating", formatter(messageSection.getString("spectating"), (respawnTicks / 20L)));
-        if (messageSection.getStringList("deniedCommand") == null)
+        if (messageSection.getString("deniedCommand") == null)
             messageSection.set("deniedCommand", "&cYou are not allowed to use that command while death spectating.");
         messages.put("deniedCommand", formatter(messageSection.getString("deniedCommand")));
         instance.saveConfig();
