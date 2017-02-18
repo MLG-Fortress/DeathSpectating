@@ -3,8 +3,11 @@ package to.us.tf.DeathSpectating;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -161,12 +164,15 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 }
             }
 
+            //TODO: Non-vanilla behavior, see issue #4
+            String deathMessage = "";
 
             /*Fire PlayerDeathEvent*/
-            PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, null);
+            PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, deathMessage);
             deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
             getServer().getPluginManager().callEvent(deathEvent);
 
+            //TODO: Non-vanilla behavior, see issue #5
             //Print death message
             if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
@@ -198,6 +204,11 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //Close any inventory the player may be viewing
             player.closeInventory();
 
+            //Increment/reset death statistics
+            player.incrementStatistic(Statistic.DEATHS);
+            player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
+
+
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
@@ -218,6 +229,17 @@ public class DeathSpectating extends JavaPlugin implements Listener
             }
             if (killer == player) //Though we don't care if they did it themselves
                 killer = null;
+
+            //Increment killer's PLAYER_KILLS
+            if (killer != null && killer.getType() == EntityType.PLAYER)
+            {
+                Player playerKiller = (Player)killer;
+                playerKiller.incrementStatistic(Statistic.PLAYER_KILLS);
+            }
+
+            //Increment ENTITY_KILLED_BY if killer is not null and is a creature
+            if (killer != null && killer instanceof Creature)
+                player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
 
             /*Start death spectating!*/
             SpectateTask task = new SpectateTask(player, getRespawnTicks(), killer, this);
