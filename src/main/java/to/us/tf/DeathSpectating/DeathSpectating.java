@@ -18,11 +18,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
-import to.us.tf.DeathSpectating.listeners.DeathListener;
+import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,7 +37,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
     {
         configManager = new ConfigManager(this);
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
     }
 

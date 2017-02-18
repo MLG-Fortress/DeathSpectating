@@ -12,11 +12,11 @@ import to.us.tf.DeathSpectating.DeathSpectating;
  * Created on 2/15/2017.
  * @author RoboMWM
  */
-public class DeathListener implements Listener
+public class DamageListener implements Listener
 {
     DeathSpectating instance;
 
-    public DeathListener(DeathSpectating deathSpectating)
+    public DamageListener(DeathSpectating deathSpectating)
     {
         instance = deathSpectating;
     }
