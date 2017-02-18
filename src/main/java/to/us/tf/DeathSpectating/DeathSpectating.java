@@ -208,6 +208,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.incrementStatistic(Statistic.DEATHS);
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
 
+            //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
+            //TODO: Non-vanilla behavior: Smoke effect (Issue #14)
 
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
@@ -225,6 +227,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     Projectile arrow = (Projectile) killer;
                     if (arrow.getShooter() instanceof LivingEntity)
                         killer = (Entity) arrow.getShooter();
+                    arrow.remove(); //Delete projectile
                 }
             }
             if (killer == player) //Though we don't care if they did it themselves
