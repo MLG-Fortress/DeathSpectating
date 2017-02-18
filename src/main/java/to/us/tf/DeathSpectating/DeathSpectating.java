@@ -140,6 +140,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //Player#isDead() == true when PlayerDeathEvent is fired.
             setSpectating(player, true);
 
+            /*Start Death simulation*/
+
             //+phoenix616: RoboMWM: it will drop level * 7 exp and 100 as a maximum
             //see https://minecraft.gamepedia.com/Health#Death
             int expToDrop = SetExpFix.getTotalExperience(player);
@@ -189,6 +191,14 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (deathEvent.getDroppedExp() > 0)
                 player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(deathEvent.getDroppedExp());
 
+            //Close any inventory the player may be viewing
+            player.closeInventory();
+
+            //Clear potion effects
+            for (PotionEffect potionEffect : player.getActivePotionEffects())
+                player.removePotionEffect(potionEffect.getType());
+
+            /* End Death simulation*/
 
             //Determine what entity killed this player (Entity#getKiller can only return a Player)
             Entity killer = player.getKiller();
@@ -204,10 +214,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
             }
             if (killer == player) //Though we don't care if they did it themselves
                 killer = null;
-
-            //Clear potion effects
-            for (PotionEffect potionEffect : player.getActivePotionEffects())
-                player.removePotionEffect(potionEffect.getType());
 
             /*Start death spectating!*/
             SpectateTask task = new SpectateTask(player, getRespawnTicks(), killer, this);
