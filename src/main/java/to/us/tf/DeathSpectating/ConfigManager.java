@@ -1,14 +1,19 @@
 package to.us.tf.DeathSpectating;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,6 +26,7 @@ public class ConfigManager
     private DeathSpectating instance;
     private FileConfiguration config;
     private long respawnTicks = 160L; //8 seconds
+    private Map<String, String> messages = new HashMap<>();
     private Set<World> whitelistedWorlds = new HashSet<>();
     private Set<String> whitelistedCommands = new HashSet<>();
     private Set<EntityDamageEvent.DamageCause> blacklistedDamageCauses = new HashSet<>();
@@ -52,11 +58,15 @@ public class ConfigManager
         {
             for (String causeString : config.getStringList("damageCauseBlacklist"))
             {
-                EntityDamageEvent.DamageCause damageCause = EntityDamageEvent.DamageCause.valueOf(causeString.toUpperCase());
-                if (damageCause == null)
-                    instance.getLogger().warning(causeString + " is not a valid DamageCause.");
-                else
-                    blacklistedDamageCauses.add(damageCause);
+                try
+                {
+                    blacklistedDamageCauses.add(EntityDamageEvent.DamageCause.valueOf(causeString.toUpperCase()));
+                }
+                catch (IllegalArgumentException e)
+                {
+                    instance.getLogger().warning(causeString + " is not a valid DamageCause. See documentation for a list of valid DamageCauses");
+                }
+
             }
         }
         if (config.getBoolean("useWorldWhitelist"))
@@ -74,6 +84,19 @@ public class ConfigManager
         {
             whitelistedCommands.add(command);
         }
+
+        //Messages
+        ConfigurationSection messageSection = config.getConfigurationSection("messages");
+        if (messageSection == null)
+            messageSection = config.createSection("messages");
+
+        if (messageSection.getString("spectating") == null)
+            messageSection.set("spectating", "&cYou died! Respawning in {0} seconds.");
+        messages.put("spectating", formatter(messageSection.getString("spectating"), (respawnTicks / 20L)));
+        if (messageSection.getStringList("deniedCommand") == null)
+            messageSection.set("deniedCommand", "&cYou are not allowed to use that command while death spectating.");
+        messages.put("deniedCommand", formatter(messageSection.getString("deniedCommand")));
+        instance.saveConfig();
     }
 
     public long getRespawnTicks()
@@ -81,19 +104,29 @@ public class ConfigManager
         return respawnTicks;
     }
 
-    public boolean canSpectatorTeleport(Player player)
-    {
-        return player.hasPermission("deathspectating.teleport");
-    }
-
     public boolean isWhitelistedCommand(String command)
     {
         return whitelistedCommands.contains(command);
     }
 
+    public boolean isAllowedToUseAnyCommand(Player player)
+    {
+        return player.hasPermission("deathspectating.commands");
+    }
+
+    public String getCommandDeniedMessage()
+    {
+        return messages.get("deniedCommand");
+    }
+
+    public String getYouDiedMessage()
+    {
+        return messages.get("spectating");
+    }
+
     public boolean canSpectate(Player player, EntityDamageEvent.DamageCause damageCause)
     {
-        return damageCause != null && isWhitelistedWorld(player.getWorld()) && !blacklistedDamageCauses.contains(damageCause);
+        return damageCause != null && isWhitelistedWorld(player.getWorld()) && !blacklistedDamageCauses.contains(damageCause) && hasPermissionToSpectate(player);
     }
 
     /*Private methods, for now*/
@@ -108,4 +141,13 @@ public class ConfigManager
         return !usePermissionForSpectating || player.hasPermission("deathspectating.spectate");
     }
 
+    private String formatter(String stringToFormat, Object... formatees)
+    {
+        return formatter(MessageFormat.format(stringToFormat, formatees));
+    }
+
+    private String formatter(String stringToFormat)
+    {
+        return ChatColor.translateAlternateColorCodes('&', stringToFormat);
+    }
 }

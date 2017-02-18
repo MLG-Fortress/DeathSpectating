@@ -246,6 +246,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
             getServer().getPluginManager().callEvent(new DeathSpectatingEvent(task));
             task.runTaskTimer(this, 1L, 1L);
 
+            //Send player a message that they were killed and are now spectating, if configured to do so
+            if (!configManager.getYouDiedMessage().isEmpty())
+                player.sendMessage(configManager.getYouDiedMessage());
+
             return true;
         }
         catch (Exception e)

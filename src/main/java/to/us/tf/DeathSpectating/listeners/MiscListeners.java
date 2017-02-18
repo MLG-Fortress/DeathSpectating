@@ -36,8 +36,6 @@ public class MiscListeners implements Listener
     {
         if (!instance.isSpectating(event.getPlayer()))
             return;
-        if (configManager.canSpectatorTeleport(event.getPlayer()))
-            return;
         try
         {
             //Only allow "death spectating" teleports to occur
@@ -56,7 +54,7 @@ public class MiscListeners implements Listener
             event.setCancelled(true);
     }
 
-    //Stops some abilities from being used
+    //Some plugins trigger abilities if the player sneaks, even in spectating gamemode
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     void onPlayerTryToSneakWhenDead (PlayerToggleSneakEvent event)
     {
@@ -67,18 +65,21 @@ public class MiscListeners implements Listener
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     void onPlayerTryToRunCommandWhenDead(PlayerCommandPreprocessEvent event)
     {
-        if (instance.isSpectating(event.getPlayer()))
+        if (instance.isSpectating(event.getPlayer()) && !configManager.isAllowedToUseAnyCommand(event.getPlayer()))
         {
             String command = event.getMessage().split(" ")[0]; //Got a more efficient/better way? Let me know/PR it!
             command = command.substring(1, command.length()); //Remove slash
             if (!configManager.isWhitelistedCommand(command))
+            {
                 event.setCancelled(true);
+                if (!configManager.getCommandDeniedMessage().isEmpty())
+                    event.getPlayer().sendMessage(configManager.getCommandDeniedMessage());
+            }
         }
     }
 
-    /**
-     * Players cannot quit and remain death spectating
-     */
+
+    //Players cannot quit and remain death spectating; instantly respawn players that quit while death spectating
     @EventHandler(priority = EventPriority.LOWEST)
     void onPlayerQuitWhileSpectatingOrDead(PlayerQuitEvent event)
     {
@@ -93,9 +94,7 @@ public class MiscListeners implements Listener
             return;
         Player player = (Player)event.getEntity();
         if (player.getGameMode() == GameMode.SPECTATOR && instance.isSpectating(player))
-        {
             event.setCancelled(true);
-        }
     }
 
 }

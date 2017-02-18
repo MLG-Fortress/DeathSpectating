@@ -2,15 +2,16 @@ name: DeathSpectating
 author: RoboMWM
 version: ${project.version}
 main: to.us.tf.DeathSpectating.DeathSpectating
+softdepend: [Multiverse-Core, MultiWorld]
 permissions:
     deathspectating.*:
         description: Grants ALL THE THINGS
         children:
-            deathspectating.allow: true
-            deathspectating.teleport: true
-    deathspectating.allow:
+            deathspectating.spectate: true
+            deathspectating.commands: true
+    deathspectating.spectate:
         description: Permission to enter death spectating mode. Permission has no effect if not enabled in config.
         default: false
-    deathspectating.teleport:
-        description: Permission to teleport while death spectating.
-        default: false
+    deathspectating.commands:
+        description: Permission to use any command (that the player has permission to) while death spectating.
+        default: op
