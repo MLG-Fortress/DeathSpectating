@@ -24,7 +24,6 @@ import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -136,11 +135,13 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         try
         {
-        /*Set spectating attributes*/
+            /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
             setSpectating(player, true);
 
             /*Start Death simulation*/
+
+            boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory"));
 
             //+phoenix616: RoboMWM: it will drop level * 7 exp and 100 as a maximum
             //see https://minecraft.gamepedia.com/Health#Death
@@ -149,7 +150,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 expToDrop = 100;
 
             List<ItemStack> itemsToDrop = new ArrayList<>(player.getInventory().getSize());
-            if (Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory")))
+            if (keepInventory)
             {
                 //Compile a list of null-free/air-free items to drop
                 for (ItemStack itemStack : player.getInventory().getContents())
@@ -160,8 +161,9 @@ public class DeathSpectating extends JavaPlugin implements Listener
             }
 
 
-        /*Fire PlayerDeathEvent*/
+            /*Fire PlayerDeathEvent*/
             PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, null);
+            deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
             getServer().getPluginManager().callEvent(deathEvent);
 
             //Print death message
@@ -174,7 +176,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 player.getInventory().clear();
                 for (ItemStack itemStack : deathEvent.getDrops())
                 {
-                    player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                    if (itemStack != null && itemStack.getType() != Material.AIR)
+                        player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
                 }
             }
 
