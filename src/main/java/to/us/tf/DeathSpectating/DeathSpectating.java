@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Created by Robo on 2/15/2017.
+ * @author RoboMWM
+ * Created on 2/15/2017.
  */
 public class DeathSpectating extends JavaPlugin implements Listener
 {
@@ -50,16 +51,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
         return configManager;
     }
 
-    public long getRespawnTicks()
-    {
-        return configManager.getRespawnTicks();
-    }
-
-    public boolean isSpectatingTeleportEnabled(Player player)
-    {
-        return false;
-    }
-
     public boolean isSpectating(Player player)
     {
         return player.hasMetadata("DEAD");
@@ -71,11 +62,11 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @param spectate
      * */
-    public void setSpectating(Player player, boolean spectate)
+    public void setSpectating(Player player, boolean spectate, GameMode gameMode)
     {
         if (spectate)
         {
-            player.setMetadata("DEAD", new FixedMetadataValue(this, true));
+            player.setMetadata("DEAD", new FixedMetadataValue(this, gameMode));
             player.setGameMode(GameMode.SPECTATOR);
             player.setFlySpeed(0.0f);
         }
@@ -92,7 +83,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
     {
         if (!isSpectating(player))
             return false;
-        setSpectating(player, false);
 
         //TODO: Non-Vanilla behavior - can't determine whether to tell player their "bed is missing or obstructed" (Issue #12)
         //Reason: No non-CB/NMS way to determine if player has set a bed spawn before or not.
@@ -118,7 +108,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         //Player#isDead() == true when PlayerRespawnEvent is fired.
         //This is done before teleporting in case a teleport/worldchange event handler wants to set other gamemodes instead (like Multiverse)
         //Oh, and also because the MiscListeners would cancel this teleport otherwise
-        setSpectating(player, false);
+        setSpectating(player, false, null);
 
         //Teleport player to event#getRespawnLocation
         //CB doesn't nullcheck it seems, so neither will I
@@ -140,7 +130,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         {
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
-            setSpectating(player, true);
+            setSpectating(player, true, player.getGameMode());
 
             /*Start Death simulation*/
 
@@ -209,7 +199,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
 
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
-            //TODO: Non-vanilla behavior: Smoke effect (Issue #14)
+            //TODO: Non-vanilla behavior: Smoke effect after 20 ticks (Issue #14)
 
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
@@ -245,7 +235,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
 
             /*Start death spectating!*/
-            SpectateTask task = new SpectateTask(player, getRespawnTicks(), killer, this);
+            SpectateTask task = new SpectateTask(player, configManager.getRespawnTicks(), killer, this);
             getServer().getPluginManager().callEvent(new DeathSpectatingEvent(task));
             task.runTaskTimer(this, 1L, 1L);
 
@@ -260,7 +250,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             getLogger().log(Level.SEVERE, "An error occurred while trying to start death spectating for " + player.getName());
             getLogger().log(Level.SEVERE, "Report the following stacktrace in full:\n");
             e.printStackTrace();
-            setSpectating(player, false);
+            setSpectating(player, false, null);
             return false;
         }
     }
