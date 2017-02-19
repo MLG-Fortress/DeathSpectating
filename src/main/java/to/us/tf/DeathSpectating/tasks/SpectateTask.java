@@ -73,6 +73,7 @@ public class SpectateTask extends BukkitRunnable
         //Track killer
         if (killer != null && killer.getWorld() == player.getWorld())
         {
+            player.setSpectatorTarget(null);
             vector = killer.getLocation().toVector().subtract(player.getLocation().toVector());
             player.teleport(player.getLocation().setDirection(vector));
         }
