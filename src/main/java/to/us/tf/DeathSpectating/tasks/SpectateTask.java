@@ -32,6 +32,11 @@ public class SpectateTask extends BukkitRunnable
         //    vector = player.getLocation().subtract(player.getLocation().add(0, 1, 0).toVector()).toVector();
     }
 
+    public Player getPlayer()
+    {
+        return player;
+    }
+
     public void setTicks(long ticks)
     {
         this.ticks = ticks;
