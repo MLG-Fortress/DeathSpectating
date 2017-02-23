@@ -104,6 +104,13 @@ public class DeathSpectating extends JavaPlugin implements Listener
             bedSpawn = false;
         }
 
+        //Refill health
+        player.setHealth(player.getMaxHealth());
+
+        //Refill food bar and saturation
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
+
         /*Fire PlayerRespawnEvent*/
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(player, spawnLocation, bedSpawn);
         getServer().getPluginManager().callEvent(respawnEvent);

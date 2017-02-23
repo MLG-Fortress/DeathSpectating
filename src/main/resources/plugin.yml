@@ -2,6 +2,7 @@ name: DeathSpectating
 author: RoboMWM
 version: ${project.version}
 main: to.us.tf.DeathSpectating.DeathSpectating
+website: https://github.com/MLG-Fortress/DeathSpectating/
 softdepend: [Multiverse-Core, MultiWorld]
 permissions:
     deathspectating.*:
