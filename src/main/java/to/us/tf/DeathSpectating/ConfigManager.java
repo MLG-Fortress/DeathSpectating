@@ -103,14 +103,11 @@ public class ConfigManager
         ConfigurationSection titleSection = config.getConfigurationSection("titleMessages");
         if (titleSection == null)
             titleSection = config.createSection("titleMessages");
-
-        List<String> titles = new ArrayList<String>(Arrays.asList("&cYou died!", "&cGame over!"));
-        List<String> subTitles = new ArrayList<String>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}"));
-        if (titleSection.getStringList("titles") == null)
-            titleSection.set("titles", titles);
-        instance.getLogger().info(titleSection.getStringList("titles").get(0));
-        if (titleSection.getStringList("subtitles") == null)
-            titleSection.set("subtitles", subTitles);
+        
+        if (titleSection.getStringList("titles").isEmpty())
+            titleSection.set("titles", new ArrayList<String>(Arrays.asList("&cYou died!", "&cGame over!")));
+        if (titleSection.getStringList("subtitles").isEmpty())
+            titleSection.set("subtitles", new ArrayList<String>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}")));
 
         instance.saveConfig();
     }
