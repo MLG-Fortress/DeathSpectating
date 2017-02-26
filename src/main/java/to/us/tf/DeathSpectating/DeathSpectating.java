@@ -57,7 +57,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
     public boolean isSpectating(Player player)
     {
-        return player.hasMetadata("DEAD");
+        return player.getGameMode() == GameMode.SPECTATOR && player.hasMetadata("DEAD");
     }
 
     /**
@@ -236,16 +236,22 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (killer == player) //Though we don't care if they did it themselves
                 killer = null;
 
-            //Increment killer's PLAYER_KILLS
+            //Increment player's ENTITY_KILLED_BY if killer is an entitytype recorded by this statistic
+            if (killer != null)
+            {
+                try //Not going to manually check entities, TODO: ESPECIALLY WHEN IT IS NOT DOCUMENTED
+                {
+                    player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
+                }
+                catch (IllegalArgumentException e) {} // "The supplied EntityType does not have a corresponding statistic"
+            }
+
+            //Increment _killer's_ PLAYER_KILLS
             if (killer != null && killer.getType() == EntityType.PLAYER)
             {
                 Player playerKiller = (Player)killer;
                 playerKiller.incrementStatistic(Statistic.PLAYER_KILLS);
             }
-
-            //Increment ENTITY_KILLED_BY if killer is not null and is a creature
-            if (killer != null && killer instanceof Creature)
-                player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
 
             /*Start death spectating!*/
             SpectateTask task = new SpectateTask(player, configManager.getRespawnTicks(), killer, this);
