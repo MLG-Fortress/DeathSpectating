@@ -50,11 +50,13 @@ public class Titles implements Listener
     @EventHandler
     void onSpectate(DeathSpectatingEvent event)
     {
+        final String unformattedTitle = config.getDeathTitle("titles");
+        final String unformattedSubTitle = config.getDeathTitle("subtitles");
+        if (unformattedTitle.isEmpty() && unformattedSubTitle.isEmpty()) //Disabled
+            return;
         new BukkitRunnable()
         {
             SpectateTask spectateTask = event.getSpectateTask();
-            String unformattedTitle = config.getDeathTitle("title");
-            String unformattedSubTitle = config.getDeathTitle("subtitle");
             int score = scores.remove(spectateTask.getPlayer());
 
             @Override

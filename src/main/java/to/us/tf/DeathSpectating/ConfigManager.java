@@ -104,9 +104,9 @@ public class ConfigManager
         if (titleSection == null)
             titleSection = config.createSection("titleMessages");
 
-        if (titleSection.getStringList("title") == null)
+        if (titleSection.getStringList("titles") == null)
             titleSection.set("title", new ArrayList<>(Arrays.asList("&cYou died!", "&cGame over!")));
-        if (titleSection.getStringList("subtitle") == null)
+        if (titleSection.getStringList("subtitles") == null)
             titleSection.set("subtitle", new ArrayList<>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}")));
 
         instance.saveConfig();
