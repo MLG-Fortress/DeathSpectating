@@ -108,6 +108,7 @@ public class ConfigManager
         List<String> subTitles = new ArrayList<String>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}"));
         if (titleSection.getStringList("titles") == null)
             titleSection.set("titles", titles);
+        instance.getLogger().info(titleSection.getStringList("titles").get(0));
         if (titleSection.getStringList("subtitles") == null)
             titleSection.set("subtitles", subTitles);
 
