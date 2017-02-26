@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2/16/2017.
@@ -32,6 +34,7 @@ public class ConfigManager
     private Set<EntityDamageEvent.DamageCause> blacklistedDamageCauses = new HashSet<>();
     private boolean usePermissionForSpectating = false;
 
+
     ConfigManager(DeathSpectating deathSpectating)
     {
         instance = deathSpectating;
@@ -46,8 +49,7 @@ public class ConfigManager
         for (World world : instance.getServer().getWorlds())
             whitelist.add(world.getName());
         config.addDefault("worldWhitelist", whitelist);
-        List<String> cmdWhitelist = new ArrayList<>(Arrays.asList("me", "m", "msg", "message", "t", "tell", "w", "whisper", "list", "help", "?", "info", "report"));
-        config.addDefault("commandWhitelist", cmdWhitelist);
+        config.addDefault("commandWhitelist", new ArrayList<>(Arrays.asList("me", "m", "msg", "message", "t", "tell", "w", "whisper", "list", "help", "?", "info", "report")));
 
         config.options().copyDefaults(true);
         instance.saveConfig();
@@ -96,7 +98,24 @@ public class ConfigManager
         if (messageSection.getString("deniedCommand") == null)
             messageSection.set("deniedCommand", "&cYou are not allowed to use that command while death spectating.");
         messages.put("deniedCommand", formatter(messageSection.getString("deniedCommand")));
+
+        //Title messages
+        ConfigurationSection titleSection = config.getConfigurationSection("titleMessages");
+        if (titleSection == null)
+            titleSection = config.createSection("titleMessages");
+
+        if (titleSection.getStringList("title") == null)
+            titleSection.set("title", new ArrayList<>(Arrays.asList("&cYou died!", "&cGame over!")));
+        if (titleSection.getStringList("subtitle") == null)
+            titleSection.set("subtitle", new ArrayList<>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}")));
+
         instance.saveConfig();
+    }
+
+    public String getDeathTitle(@Nonnull String titleType)
+    {
+        List<String> hi = config.getConfigurationSection("titleMessages").getStringList(titleType);
+        return hi.get(ThreadLocalRandom.current().nextInt(hi.size()));
     }
 
     public long getRespawnTicks()
@@ -129,6 +148,17 @@ public class ConfigManager
         return damageCause != null && isWhitelistedWorld(player.getWorld()) && !blacklistedDamageCauses.contains(damageCause) && hasPermissionToSpectate(player);
     }
 
+    /*Utility methods*/
+    public String formatter(String stringToFormat, Object... formatees)
+    {
+        return formatter(MessageFormat.format(stringToFormat, formatees));
+    }
+
+    public String formatter(String stringToFormat)
+    {
+        return ChatColor.translateAlternateColorCodes('&', stringToFormat);
+    }
+
     /*Private methods, for now*/
 
     private boolean isWhitelistedWorld(World world)
@@ -139,15 +169,5 @@ public class ConfigManager
     private boolean hasPermissionToSpectate(Player player)
     {
         return !usePermissionForSpectating || player.hasPermission("deathspectating.spectate");
-    }
-
-    private String formatter(String stringToFormat, Object... formatees)
-    {
-        return formatter(MessageFormat.format(stringToFormat, formatees));
-    }
-
-    private String formatter(String stringToFormat)
-    {
-        return ChatColor.translateAlternateColorCodes('&', stringToFormat);
     }
 }
