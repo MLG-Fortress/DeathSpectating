@@ -49,8 +49,7 @@ public class DamageListener implements Listener
         }
         catch (Exception e) //1.10 and lower "compatibility"
         {
-            if (CompatUtil.isNewer()) return;
-            else throw e;
+            if (CompatUtil.isNewer()) throw e;
         }
 
         //Ignore if this is probably the result of the Essentials suicide command
