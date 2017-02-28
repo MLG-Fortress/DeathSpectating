@@ -162,7 +162,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 //Compile a list of null-free/air-free items to drop
                 for (ItemStack itemStack : player.getInventory().getContents())
                 {
-                    if (itemStack != null && itemStack.getType() != Material.AIR && itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
+                    if (itemStack != null && itemStack.getType() != Material.AIR && !itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
                         itemsToDrop.add(itemStack);
                 }
             }
