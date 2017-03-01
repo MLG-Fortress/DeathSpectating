@@ -49,7 +49,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
+        if (!CompatUtil.isOlder(11)) //TODO: register in class, not in main(?)
+            getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
     }
 
     public ConfigManager getConfigManager()
@@ -246,6 +247,13 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
                 }
                 catch (IllegalArgumentException e) {} // "The supplied EntityType does not have a corresponding statistic"
+                catch (NullPointerException e)
+                {
+                    getLogger().warning("NPE: Was unable to increment ENTITY_KILLED_BY statistic.");
+                    getLogger().info("If you wish to report this, please include the information below:");
+                    getLogger().info("Killer was " + killer.toString());
+                    getLogger().info("Player was " + player.toString());
+                }
             }
 
             //Increment _killer's_ PLAYER_KILLS
