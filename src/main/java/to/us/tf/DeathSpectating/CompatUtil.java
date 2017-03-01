@@ -9,8 +9,17 @@ import org.bukkit.Bukkit;
  */
 public class CompatUtil
 {
+    private static Integer serverVersion = null;
+    private static int currentVersion = 11;
     public static boolean isNewer()
     {
+        return getVersion() > currentVersion;
+    }
+
+    public static int getVersion()
+    {
+        if (serverVersion != null)
+            return serverVersion;
         String version = Bukkit.getBukkitVersion();
         version = version.substring(2);
         version = version.substring(0, version.indexOf("."));
@@ -22,8 +31,14 @@ public class CompatUtil
         catch (Exception e)
         {
             Bukkit.getLogger().warning("[DeathSpectating] Was not able to determine bukkit version.");
-            return false;
+            return -1;
         }
-        return versionNumber > 11;
+        serverVersion = versionNumber;
+        return versionNumber;
+    }
+
+    public static boolean isOlder(int version)
+    {
+        return getVersion() < version;
     }
 }

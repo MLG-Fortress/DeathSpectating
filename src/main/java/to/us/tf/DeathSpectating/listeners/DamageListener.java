@@ -47,7 +47,7 @@ public class DamageListener implements Listener
             if (inventory.getItemInMainHand().getType() == Material.TOTEM || inventory.getItemInOffHand().getType() == Material.TOTEM)
                 return;
         }
-        catch (Exception e) //1.10 and lower "compatibility"
+        catch (NoSuchFieldError | NoSuchMethodError e) //TOTEM (not in 1.10 and below) //getItemInMainHand, etc. (not in 1.8 and below)
         {
             if (CompatUtil.isNewer()) throw e;
         }
