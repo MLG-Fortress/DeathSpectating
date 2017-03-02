@@ -1,5 +1,6 @@
 package to.us.tf.DeathSpectating.features;
 
+import me.robomwm.usefulutil.compat.UsefulCompat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,8 +31,10 @@ public class Titles implements Listener
 
     public Titles(DeathSpectating deathSpectating, ConfigManager config)
     {
+        if (UsefulCompat.isOlder(11)) return;
         instance = deathSpectating;
         this.config = config;
+        instance.registerListener(this);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

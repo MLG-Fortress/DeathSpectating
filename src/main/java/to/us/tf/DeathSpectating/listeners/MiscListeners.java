@@ -29,6 +29,7 @@ public class MiscListeners implements Listener
     {
         instance = deathSpectating;
         configManager = instance.getConfigManager();
+        instance.registerListener(this);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

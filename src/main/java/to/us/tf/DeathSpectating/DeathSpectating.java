@@ -1,5 +1,6 @@
 package to.us.tf.DeathSpectating;
 
+import me.robomwm.usefulutil.compat.UsefulCompat;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,14 +44,18 @@ public class DeathSpectating extends JavaPlugin implements Listener
 {
     private ConfigManager configManager;
 
+    public void registerListener(Listener listener)
+    {
+        getServer().getPluginManager().registerEvents(listener, this);
+    }
+
     public void onEnable()
     {
         configManager = new ConfigManager(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        if (!CompatUtil.isOlder(11)) //TODO: register in class, not in main(?)
-            getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
+        new MiscListeners(this);
+        new Titles(this, configManager);
     }
 
     public ConfigManager getConfigManager()
@@ -137,6 +142,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
      */
     public boolean startDeathSpectating(Player player)
     {
+        if (UsefulCompat.compatCall(null, "deathspectate", this, player, getConfigManager())) return true;
+
         if (isSpectating(player))
             return false;
 
@@ -163,7 +170,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 //Compile a list of null-free/air-free items to drop
                 for (ItemStack itemStack : player.getInventory().getContents())
                 {
-                    if (itemStack != null && itemStack.getType() != Material.AIR && !itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
+                    if (itemStack != null && itemStack.getType() != Material.AIR) //VANISHING
                         itemsToDrop.add(itemStack);
                 }
             }
