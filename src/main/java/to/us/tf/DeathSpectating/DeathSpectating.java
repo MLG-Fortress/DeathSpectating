@@ -1,14 +1,9 @@
 package to.us.tf.DeathSpectating;
 
-import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Statistic;
-import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -24,9 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
-import to.us.tf.DeathSpectating.features.Titles;
 import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
@@ -49,8 +42,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        if (!CompatUtil.isOlder(11)) //TODO: register in class, not in main(?)
-            getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
     }
 
     public ConfigManager getConfigManager()
@@ -163,7 +154,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 //Compile a list of null-free/air-free items to drop
                 for (ItemStack itemStack : player.getInventory().getContents())
                 {
-                    if (itemStack != null && itemStack.getType() != Material.AIR && !itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
+                    if (itemStack != null && itemStack.getType() != Material.AIR)
                         itemsToDrop.add(itemStack);
                 }
             }
@@ -211,11 +202,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //Increment/reset death statistics
             player.incrementStatistic(Statistic.DEATHS);
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
-
-            //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
-            //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
-            if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
-                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25);
 
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())

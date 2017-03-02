@@ -7,7 +7,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,24 +97,6 @@ public class ConfigManager
         if (messageSection.getString("deniedCommand") == null)
             messageSection.set("deniedCommand", "&cYou are not allowed to use that command while death spectating.");
         messages.put("deniedCommand", formatter(messageSection.getString("deniedCommand")));
-
-        //Title messages
-        ConfigurationSection titleSection = config.getConfigurationSection("titleMessages");
-        if (titleSection == null)
-            titleSection = config.createSection("titleMessages");
-
-        if (titleSection.getStringList("titles").isEmpty())
-            titleSection.set("titles", new ArrayList<>(Arrays.asList("&cYou died!", "&cGame over!")));
-        if (titleSection.getStringList("subtitles").isEmpty())
-            titleSection.set("subtitles", new ArrayList<>(Arrays.asList("Respawning in {0}", "Score: &e{1}", "Score: &e{1}&f, Respawning in {0}")));
-
-        instance.saveConfig();
-    }
-
-    public String getDeathTitle(@Nonnull String titleType)
-    {
-        List<String> hi = config.getConfigurationSection("titleMessages").getStringList(titleType);
-        return hi.get(ThreadLocalRandom.current().nextInt(hi.size()));
     }
 
     public long getRespawnTicks()
