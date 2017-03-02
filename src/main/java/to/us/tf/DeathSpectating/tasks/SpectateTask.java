@@ -6,8 +6,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import to.us.tf.DeathSpectating.DeathSpectating;
 
-import javax.annotation.Nullable;
-
 /**
  * Created on 2/15/2017.
  * @author RoboMWM
@@ -21,7 +19,7 @@ public class SpectateTask extends BukkitRunnable
     private long ticks;
     private Vector vector;
 
-    public SpectateTask(Player player, long ticks, @Nullable Entity killer, DeathSpectating deathSpectating)
+    public SpectateTask(Player player, long ticks, Entity killer, DeathSpectating deathSpectating)
     {
         this.player = player;
         this.ticks = ticks;
