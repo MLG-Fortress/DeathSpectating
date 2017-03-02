@@ -6,9 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Statistic;
-import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -24,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
 import to.us.tf.DeathSpectating.features.Titles;
 import to.us.tf.DeathSpectating.listeners.DamageListener;
@@ -49,8 +46,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        if (!CompatUtil.isOlder(11)) //TODO: register in class, not in main(?)
-            getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
+        getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
     }
 
     public ConfigManager getConfigManager()
