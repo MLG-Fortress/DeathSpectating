@@ -140,9 +140,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
         {
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
+            //Also prevents any potential to pickup anything that's dropped.
             setSpectating(player, true, player.getGameMode());
 
-            /*Start Death simulation*/
+            /*Start Death Event simulation*/
 
             boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory"));
             boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
@@ -167,9 +168,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //TODO: Non-vanilla behavior, see issue #4
             String deathMessage = "";
 
-            /*Fire PlayerDeathEvent*/
+            /*Prepare PlayerDeathEvent*/
             PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, deathMessage);
             deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
+            //And fire
             getServer().getPluginManager().callEvent(deathEvent);
 
             //TODO: Non-vanilla behavior, see issue #5
@@ -177,7 +179,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
 
-            //Clear and drop items
+            //Clear and drop items if keepInventory == false
             if (!deathEvent.getKeepInventory())
             {
                 player.getInventory().clear();

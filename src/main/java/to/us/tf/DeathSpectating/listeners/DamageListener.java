@@ -1,6 +1,8 @@
 package to.us.tf.DeathSpectating.listeners;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,7 +56,18 @@ public class DamageListener implements Listener
 
         /*Put player in death spectating mode*/
         if (instance.startDeathSpectating(player))
+        {
             //Cancel event so player doesn't actually die
             event.setCancelled(true);
+
+            //Play the "hit" sound (since we canceled the event, the hit sound will not play)
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, SoundCategory.PLAYERS, 1.0f, 1.0f);
+
+            //Play the "death" sound (to all other players except the killed player; vanilla (spigot?) behavior).
+            //fyi, default resource pack doesn't have a different sound for this; only custom resource packs make use of this.
+            for (Player p : player.getWorld().getPlayers())
+                p.playSound(player.getLocation(), Sound.ENTITY_PLAYER_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f);
+        }
+
     }
 }
