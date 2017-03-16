@@ -78,7 +78,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.removeMetadata("DEAD", this);
             player.setLastDamageCause(null);
             player.setGameMode(getServer().getDefaultGameMode());
-            player.setFlySpeed(0.2f);
+            player.setFlySpeed(0.1f);
         }
     }
 
