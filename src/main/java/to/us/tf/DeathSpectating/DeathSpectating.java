@@ -213,7 +213,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
             //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
             if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
-                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25);
+                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0.1);
 
             //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
