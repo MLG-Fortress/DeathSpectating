@@ -221,7 +221,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
             //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
             if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
-                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0);
+                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0.001);
 
             //Play the "death" sound (to all other players except the killed player; vanilla (spigot?) behavior).
             //fyi, default resource pack doesn't have a different sound for this; only custom resource packs make use of this.
