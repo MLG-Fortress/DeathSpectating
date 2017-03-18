@@ -5,10 +5,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.Statistic;
-import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
 import to.us.tf.DeathSpectating.features.Titles;
 import to.us.tf.DeathSpectating.listeners.DamageListener;
@@ -32,7 +31,9 @@ import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -49,8 +50,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        if (!CompatUtil.isOlder(11)) //TODO: register in class, not in main(?)
-            getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
+        getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
     }
 
     public ConfigManager getConfigManager()
@@ -82,7 +82,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.removeMetadata("DEAD", this);
             player.setLastDamageCause(null);
             player.setGameMode(getServer().getDefaultGameMode());
-            player.setFlySpeed(0.2f);
+            player.setFlySpeed(0.1f);
         }
     }
 
@@ -144,9 +144,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
         {
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
+            //Also prevents any potential to pickup anything that's dropped.
             setSpectating(player, true, player.getGameMode());
 
-            /*Start Death simulation*/
+            /*Start Death Event simulation*/
 
             boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory"));
             boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
@@ -171,9 +172,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //TODO: Non-vanilla behavior, see issue #4
             String deathMessage = "";
 
-            /*Fire PlayerDeathEvent*/
+            /*Prepare PlayerDeathEvent*/
             PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, deathMessage);
             deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
+            //And fire
             getServer().getPluginManager().callEvent(deathEvent);
 
             //TODO: Non-vanilla behavior, see issue #5
@@ -181,7 +183,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
 
-            //Clear and drop items
+            //Clear and drop items if keepInventory == false
             if (!deathEvent.getKeepInventory())
             {
                 player.getInventory().clear();
@@ -212,14 +214,22 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.incrementStatistic(Statistic.DEATHS);
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
 
+            //Clear potion effects TODO: do this before firing death event?
+            for (PotionEffect potionEffect : player.getActivePotionEffects())
+                player.removePotionEffect(potionEffect.getType());
+
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
             //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
             if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
-                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25);
+                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0.001);
 
-            //Clear potion effects
-            for (PotionEffect potionEffect : player.getActivePotionEffects())
-                player.removePotionEffect(potionEffect.getType());
+            //Play the "death" sound (to all other players except the killed player; vanilla (spigot?) behavior).
+            //fyi, default resource pack doesn't have a different sound for this; only custom resource packs make use of this.
+            //TODO: distance check?
+            Set<Player> players = new HashSet<>(player.getWorld().getPlayers());
+            players.remove(player);
+            for (Player p : players)
+                p.playSound(player.getLocation(), Sound.ENTITY_PLAYER_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
             /* End Death simulation*/
 
