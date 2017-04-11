@@ -30,7 +30,6 @@ import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +69,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @param spectate
      * */
-    public void setSpectating(Player player, boolean spectate, @Nullable GameMode gameMode)
+    public void setSpectating(Player player, boolean spectate, GameMode gameMode)
     {
         if (spectate)
         {
@@ -89,7 +88,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
     public boolean respawnPlayer(Player player)
     {
-        if (!isSpectating(player) || player.isDead())
+        if (!isSpectating(player))
             return false;
 
         //TODO: Non-Vanilla behavior - can't determine whether to tell player their "bed is missing or obstructed" (Issue #12)
@@ -115,14 +114,9 @@ public class DeathSpectating extends JavaPlugin implements Listener
         player.setFoodLevel(20);
         player.setSaturation(20f);
 
-        //Indicate that we are doing the respawning (in case plugins want to know if this is a DeathSpectating respawn)
-        player.setMetadata("DS_RESPAWN", new FixedMetadataValue(this, true));
-
         /*Fire PlayerRespawnEvent*/
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(player, spawnLocation, bedSpawn);
         getServer().getPluginManager().callEvent(respawnEvent);
-
-        player.removeMetadata("DS_RESPAWN", this);
 
         /*undo spectating attributes*/
         //Player#isDead() == true when PlayerRespawnEvent is fired.
@@ -258,12 +252,18 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //Increment player's ENTITY_KILLED_BY if killer is an entitytype recorded by this statistic
             if (killer != null)
             {
-                try //The list of entities this statistic applies to is arbitrary and may change with future MC updates - so I will stick to eating exceptions here.
+                try //Not going to manually check entities, TODO: ESPECIALLY WHEN IT IS NOT DOCUMENTED
                 {
                     player.incrementStatistic(Statistic.ENTITY_KILLED_BY, killer.getType());
                 }
-                catch (IllegalArgumentException ignored) {} // "The supplied EntityType does not have a corresponding statistic"
-                catch (NullPointerException ignored) {} // Generally occurs when a player killed another player
+                catch (IllegalArgumentException e) {} // "The supplied EntityType does not have a corresponding statistic"
+                catch (NullPointerException e)
+                {
+                    getLogger().warning("NPE: Was unable to increment ENTITY_KILLED_BY statistic.");
+                    getLogger().info("If you wish to report this, please include the information below:");
+                    getLogger().info("Killer was " + killer.toString());
+                    getLogger().info("Player was " + player.toString());
+                }
             }
 
             //Increment _killer's_ PLAYER_KILLS
