@@ -83,6 +83,8 @@ public class SpectateTask extends BukkitRunnable
             player.teleport(player.getLocation().setDirection(vector));
         }
 
+        player.setFlySpeed(0.0f);
+
         ticks--;
     }
 }
