@@ -148,6 +148,9 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         try
         {
+            boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory")) || player.getGameMode() == GameMode.SPECTATOR;
+            boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
+
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
             //Also prevents any potential to pickup anything that's dropped.
@@ -155,14 +158,9 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
             /*Start Death Event simulation*/
 
-            boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory"));
-            boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
-
             //+phoenix616: RoboMWM: it will drop level * 7 exp and 100 as a maximum
             //see https://minecraft.gamepedia.com/Health#Death
-            int expToDrop = SetExpFix.getTotalExperience(player);
-            if (expToDrop > 100)
-                expToDrop = 100;
+            int expToDrop = 0;
 
             List<ItemStack> itemsToDrop = new ArrayList<>(player.getInventory().getSize());
             if (!keepInventory)
@@ -173,6 +171,11 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     if (itemStack != null && itemStack.getType() != Material.AIR && !itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
                         itemsToDrop.add(itemStack);
                 }
+
+                //Calculate and set experience to drop
+                expToDrop = SetExpFix.getTotalExperience(player);
+                if (expToDrop > 100)
+                    expToDrop = 100;
             }
 
             //TODO: Non-vanilla behavior, see issue #4
@@ -198,23 +201,24 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     if (itemStack != null && itemStack.getType() != Material.AIR)
                         player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
                 }
+
+                //Clear and set experience, if getKeepLevel() == false
+                if (!deathEvent.getKeepLevel())
+                {
+                    SetExpFix.setTotalExperience(player, 0);
+                    player.setTotalExperience(deathEvent.getNewTotalExp());
+                    player.setLevel(deathEvent.getNewLevel());
+                    player.setExp(deathEvent.getNewExp());
+                }
             }
 
-            //Clear and set experience, if getKeepLevel() == false
-            if (!deathEvent.getKeepLevel())
-            {
-                SetExpFix.setTotalExperience(player, 0);
-                player.setTotalExperience(deathEvent.getNewTotalExp());
-                player.setLevel(deathEvent.getNewLevel());
-                player.setExp(deathEvent.getNewExp());
-            }
+            //Close any inventory the player may be viewing
+            player.closeInventory();
+            player.setSpectatorTarget(player); //Remove spectated target
 
             //Drop experience
             if (deathEvent.getDroppedExp() > 0)
                 player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(deathEvent.getDroppedExp());
-
-            //Close any inventory the player may be viewing
-            player.closeInventory();
 
             //Increment/reset death statistics
             player.incrementStatistic(Statistic.DEATHS);
