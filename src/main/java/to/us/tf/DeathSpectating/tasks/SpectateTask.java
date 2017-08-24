@@ -78,12 +78,12 @@ public class SpectateTask extends BukkitRunnable
         //Track killer
         if (killer != null && killer.isValid() && !killer.isDead() && killer.getWorld() == player.getWorld())
         {
-            player.setSpectatorTarget(null);
             vector = killer.getLocation().toVector().subtract(player.getLocation().toVector());
             player.teleport(player.getLocation().setDirection(vector));
         }
 
-        player.setFlySpeed(0.0f);
+        //player.setSpectatorTarget(player);
+        player.setFlySpeed(0f); //does this even work for spectators?
 
         ticks--;
     }
