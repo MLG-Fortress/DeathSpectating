@@ -20,6 +20,7 @@ import to.us.tf.DeathSpectating.DeathSpectating;
  * Created on 2/15/2017.
  * @author RoboMWM
  * Primarily to stop death spectators from doing stuff
+ * If you wish to override, simply check if the event is canceled and the player has "DEAD" metadata before doing w/e you want to do
  */
 public class MiscListeners implements Listener
 {
@@ -48,22 +49,15 @@ public class MiscListeners implements Listener
         event.setCancelled(true);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    void onPlayerTryToInteractWhenDead(PlayerInteractEvent event)
-    {
-        if (instance.isSpectating(event.getPlayer()))
-            event.setCancelled(true);
-    }
-
     //Some plugins trigger abilities if the player sneaks, even in spectating gamemode
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    void onPlayerTryToSneakWhenDead (PlayerToggleSneakEvent event)
+    void onPlayerTryToSneakWhenDead(PlayerToggleSneakEvent event)
     {
         if (instance.isSpectating(event.getPlayer()) && event.isSneaking())
             event.setCancelled(true);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW) //Set to LOW to allow plugins to override without sending denial message
     void onPlayerTryToRunCommandWhenDead(PlayerCommandPreprocessEvent event)
     {
         if (instance.isSpectating(event.getPlayer()) && !configManager.isAllowedToUseAnyCommand(event.getPlayer()))
@@ -108,6 +102,13 @@ public class MiscListeners implements Listener
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     private void onPlayerSwingHand(PlayerAnimationEvent event)
+    {
+        if (instance.isSpectating(event.getPlayer()))
+            event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    void onPlayerTryToInteractWhenDead(PlayerInteractEvent event)
     {
         if (instance.isSpectating(event.getPlayer()))
             event.setCancelled(true);

@@ -20,6 +20,9 @@ public class SpectateTask extends BukkitRunnable
     private Entity killer;
     private long ticks;
     private Vector vector;
+    private String unformattedTitle;
+    private String unformattedSubTitle;
+    private int score;
 
     public SpectateTask(Player player, long ticks, @Nullable Entity killer, DeathSpectating deathSpectating)
     {
@@ -30,6 +33,10 @@ public class SpectateTask extends BukkitRunnable
         //Point down by default https://bukkit.org/threads/vectors.152310/#post-1703396
         //if (killer == null)
         //    vector = player.getLocation().subtract(player.getLocation().add(0, 1, 0).toVector()).toVector();
+
+        this.unformattedTitle = deathSpectating.getConfigManager().getDeathTitle("titles");
+        this.unformattedSubTitle = deathSpectating.getConfigManager().getDeathTitle("subtitles");
+        this.score = player.getTotalExperience();
     }
 
     public Player getPlayer()
@@ -57,6 +64,26 @@ public class SpectateTask extends BukkitRunnable
         return killer;
     }
 
+    public String getUnformattedTitle()
+    {
+        return unformattedTitle;
+    }
+
+    public void setUnformattedTitle(String unformattedTitle)
+    {
+        this.unformattedTitle = unformattedTitle;
+    }
+
+    public String getUnformattedSubTitle()
+    {
+        return unformattedSubTitle;
+    }
+
+    public void setUnformattedSubTitle(String unformattedSubTitle)
+    {
+        this.unformattedSubTitle = unformattedSubTitle;
+    }
+
     public void run()
     {
         if (player.isDead() && instance.isSpectating(player)) //A plugin (e.g. Essentials) did Player#setHealth(0)
@@ -68,9 +95,19 @@ public class SpectateTask extends BukkitRunnable
             return;
         }
 
+        if (ticks % 10 == 0)
+        {
+            int seconds = (int)ticks / 20;
+            String title = instance.getConfigManager().formatter(unformattedTitle, seconds, score);
+            String subTitle = instance.getConfigManager().formatter(unformattedSubTitle, seconds, score);
+            player.sendTitle(title, subTitle, 0, 20, 20); //Could use paper's more robust Title API
+        }
+
         if (ticks < 1)
         {
             instance.respawnPlayer(player);
+            player.sendTitle(" ", " ", 0, 1, 0); //resetTitle only seems to reset title, not both title and subtitle
+            player.resetTitle();
             this.cancel();
             return;
         }

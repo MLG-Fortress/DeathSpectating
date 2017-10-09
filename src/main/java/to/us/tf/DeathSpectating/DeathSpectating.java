@@ -1,6 +1,5 @@
 package to.us.tf.DeathSpectating;
 
-import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,7 +24,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
-import to.us.tf.DeathSpectating.features.Titles;
 import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
@@ -51,7 +49,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
-        getServer().getPluginManager().registerEvents(new Titles(this, configManager), this);
     }
 
     public ConfigManager getConfigManager()
