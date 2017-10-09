@@ -23,6 +23,7 @@ public class SpectateTask extends BukkitRunnable
     private String unformattedTitle;
     private String unformattedSubTitle;
     private int score;
+    private boolean preventMovement = true;
 
     public SpectateTask(Player player, long ticks, @Nullable Entity killer, DeathSpectating deathSpectating)
     {
@@ -88,6 +89,16 @@ public class SpectateTask extends BukkitRunnable
         this.unformattedSubTitle = unformattedSubTitle;
     }
 
+    public boolean hasPreventMovement()
+    {
+        return preventMovement;
+    }
+
+    public void setPreventMovement(boolean preventMovement)
+    {
+        this.preventMovement = preventMovement;
+    }
+
     public void run()
     {
         if (player.isDead() && instance.isSpectating(player)) //A plugin (e.g. Essentials) did Player#setHealth(0)
@@ -124,7 +135,8 @@ public class SpectateTask extends BukkitRunnable
         }
 
         //player.setSpectatorTarget(player);
-        player.setFlySpeed(0f); //does this even work for spectators?
+        if (preventMovement)
+            player.setFlySpeed(0f);
 
         ticks--;
     }
