@@ -71,6 +71,8 @@ public class SpectateTask extends BukkitRunnable
 
     public void setUnformattedTitle(String unformattedTitle)
     {
+        if (unformattedTitle == null)
+            unformattedTitle = "";
         this.unformattedTitle = unformattedTitle;
     }
 
@@ -81,6 +83,8 @@ public class SpectateTask extends BukkitRunnable
 
     public void setUnformattedSubTitle(String unformattedSubTitle)
     {
+        if (unformattedSubTitle == null)
+            unformattedSubTitle = "";
         this.unformattedSubTitle = unformattedSubTitle;
     }
 
@@ -95,7 +99,7 @@ public class SpectateTask extends BukkitRunnable
             return;
         }
 
-        if (ticks % 10 == 0)
+        if (ticks % 10 == 0 && !(unformattedTitle.isEmpty() && unformattedSubTitle.isEmpty()))
         {
             int seconds = (int)ticks / 20;
             String title = instance.getConfigManager().formatter(unformattedTitle, seconds, score);
