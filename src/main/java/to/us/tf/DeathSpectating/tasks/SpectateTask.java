@@ -40,7 +40,7 @@ public class SpectateTask extends BukkitRunnable
         this.unformattedTitle = deathSpectating.getConfigManager().getDeathTitle("titles");
         this.unformattedSubTitle = deathSpectating.getConfigManager().getDeathTitle("subtitles");
         this.score = player.getTotalExperience();
-        this.deathLocation = player.getLocation();
+        this.deathLocation = player.getLocation().clone();
     }
 
     public Player getPlayer()
@@ -140,7 +140,7 @@ public class SpectateTask extends BukkitRunnable
         }
         else if (preventMovement)
         {
-            if (deathLocation.distanceSquared(player.getLocation()) > 0)
+            if (deathLocation.distanceSquared(player.getLocation()) > 1)
                 player.teleport(deathLocation.setDirection(player.getLocation().getDirection()));
             player.setFlySpeed(0f);
             player.setSpectatorTarget(null);
