@@ -1,5 +1,6 @@
 package to.us.tf.DeathSpectating.tasks;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,6 +25,7 @@ public class SpectateTask extends BukkitRunnable
     private String unformattedSubTitle;
     private int score;
     private boolean preventMovement = true;
+    private Location deathLocation;
 
     public SpectateTask(Player player, long ticks, @Nullable Entity killer, DeathSpectating deathSpectating)
     {
@@ -38,6 +40,7 @@ public class SpectateTask extends BukkitRunnable
         this.unformattedTitle = deathSpectating.getConfigManager().getDeathTitle("titles");
         this.unformattedSubTitle = deathSpectating.getConfigManager().getDeathTitle("subtitles");
         this.score = player.getTotalExperience();
+        this.deathLocation = player.getLocation();
     }
 
     public Player getPlayer()
@@ -128,15 +131,20 @@ public class SpectateTask extends BukkitRunnable
         }
 
         //Track killer
-        if (killer != null && killer.isValid() && !killer.isDead() && killer.getWorld() == player.getWorld())
+        if (preventMovement && killer != null && killer.isValid() && !killer.isDead() && killer.getWorld() == player.getWorld())
         {
-            vector = killer.getLocation().toVector().subtract(player.getLocation().toVector());
-            player.teleport(player.getLocation().setDirection(vector));
-        }
-
-        //player.setSpectatorTarget(player);
-        if (preventMovement)
+            vector = killer.getLocation().toVector().subtract(deathLocation.toVector());
+            player.teleport(deathLocation.setDirection(vector));
             player.setFlySpeed(0f);
+            player.setSpectatorTarget(null);
+        }
+        else if (preventMovement)
+        {
+            if (player.getLocation().distanceSquared(deathLocation) > 0.5)
+                player.teleport(deathLocation.setDirection(player.getLocation().getDirection()));
+            player.setFlySpeed(0f);
+            player.setSpectatorTarget(null);
+        }
 
         ticks--;
     }
