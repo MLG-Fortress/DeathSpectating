@@ -3,6 +3,7 @@ package to.us.tf.DeathSpectating.tasks;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import to.us.tf.DeathSpectating.DeathSpectating;
@@ -40,7 +41,7 @@ public class SpectateTask extends BukkitRunnable
         this.unformattedTitle = deathSpectating.getConfigManager().getDeathTitle("titles");
         this.unformattedSubTitle = deathSpectating.getConfigManager().getDeathTitle("subtitles");
         this.score = player.getTotalExperience();
-        this.deathLocation = player.getLocation().clone();
+        this.deathLocation = player.getLocation();
     }
 
     public Player getPlayer()
@@ -134,18 +135,24 @@ public class SpectateTask extends BukkitRunnable
         if (preventMovement && killer != null && killer.isValid() && !killer.isDead() && killer.getWorld() == player.getWorld())
         {
             vector = killer.getLocation().toVector().subtract(deathLocation.toVector());
-            player.teleport(deathLocation.setDirection(vector));
+            teleportPlayer(deathLocation.setDirection(vector));
             player.setFlySpeed(0f);
             player.setSpectatorTarget(null);
         }
         else if (preventMovement)
         {
             if (deathLocation.distanceSquared(player.getLocation()) > 1)
-                player.teleport(deathLocation.setDirection(player.getLocation().getDirection()));
+                teleportPlayer(deathLocation.setDirection(player.getLocation().getDirection()));
             player.setFlySpeed(0f);
             player.setSpectatorTarget(null);
         }
 
         ticks--;
+    }
+
+    public void teleportPlayer(Location location)
+    {
+        player.setMetadata("DS_TP", new FixedMetadataValue(instance, true));
+        player.teleport(location);
     }
 }

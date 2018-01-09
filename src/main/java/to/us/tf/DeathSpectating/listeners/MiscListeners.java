@@ -38,14 +38,14 @@ public class MiscListeners implements Listener
     {
         if (!instance.isSpectating(event.getPlayer()))
             return;
-        try
+
+        //Only allow "death spectating" teleports to occur
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN && event.getPlayer().hasMetadata("DS_TP"))
         {
-            //Only allow "death spectating" teleports to occur
-            if (event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN && event.getFrom().distanceSquared(event.getTo()) == 0)
-                return;
+            event.getPlayer().removeMetadata("DS_TP", instance);
+            return;
         }
-        catch (IllegalArgumentException e) //If trying to teleport to another world, yes of course stop that
-        {}
+
         event.setCancelled(true);
     }
 
