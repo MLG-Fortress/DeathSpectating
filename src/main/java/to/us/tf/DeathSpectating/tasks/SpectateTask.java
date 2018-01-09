@@ -40,7 +40,7 @@ public class SpectateTask extends BukkitRunnable
         this.unformattedTitle = deathSpectating.getConfigManager().getDeathTitle("titles");
         this.unformattedSubTitle = deathSpectating.getConfigManager().getDeathTitle("subtitles");
         this.score = player.getTotalExperience();
-        this.deathLocation = player.getLocation().clone();
+        this.deathLocation = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
     }
 
     public Player getPlayer()
