@@ -141,7 +141,7 @@ public class SpectateTask extends BukkitRunnable
         }
         else if (preventMovement)
         {
-            if (deathLocation.distanceSquared(player.getLocation()) > 1)
+            if (deathLocation.distanceSquared(player.getLocation()) > 0)
                 teleportPlayer(deathLocation.setDirection(player.getLocation().getDirection()));
             player.setFlySpeed(0f);
             player.setSpectatorTarget(null);
