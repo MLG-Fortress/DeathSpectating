@@ -6,11 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import to.us.tf.DeathSpectating.ConfigManager;
@@ -63,7 +65,7 @@ public class MiscListeners implements Listener
         if (instance.isSpectating(event.getPlayer()) && !configManager.isAllowedToUseAnyCommand(event.getPlayer()))
         {
             String command = event.getMessage().split(" ")[0]; //Got a more efficient/better way? Let me know/PR it!
-            command = command.substring(1, command.length()); //Remove slash
+            command = command.substring(1); //Remove slash
             if (!configManager.isWhitelistedCommand(command))
             {
                 event.setCancelled(true);
@@ -75,7 +77,7 @@ public class MiscListeners implements Listener
 
 
     //Players cannot quit and remain death spectating; instantly respawn players that quit while death spectating
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW) //Set to low to allow plugins to operate on ragequitters
     void onPlayerQuitWhileSpectatingOrDead(PlayerQuitEvent event)
     {
         instance.respawnPlayer(event.getPlayer());
@@ -108,9 +110,23 @@ public class MiscListeners implements Listener
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    void onPlayerTryToInteractWhenDead(PlayerInteractEvent event)
+    private void onPlayerTryToInteractWhenDead(PlayerInteractEvent event)
     {
         if (instance.isSpectating(event.getPlayer()))
             event.setCancelled(true);
+    }
+
+    //This is unnecessary and may remove, but will add it here for now just in case
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    private void onPlayerPickupWhenDead(EntityPickupItemEvent event)
+    {
+        if (event.getEntityType() != EntityType.PLAYER)
+            return;
+        Player player = (Player)event.getEntity();
+        if (instance.isSpectating(player))
+        {
+            instance.getLogger().warning("Somehow " + player.getName() + " picked up an item while dead. We stopped this but we thought this wasn't possible. Let RoboMWM know!");
+            event.setCancelled(true);
+        }
     }
 }

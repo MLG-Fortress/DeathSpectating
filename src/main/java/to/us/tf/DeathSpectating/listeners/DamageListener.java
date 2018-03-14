@@ -18,7 +18,7 @@ import to.us.tf.DeathSpectating.DeathSpectating;
  */
 public class DamageListener implements Listener
 {
-    DeathSpectating instance;
+    private DeathSpectating instance;
 
     public DamageListener(DeathSpectating deathSpectating)
     {

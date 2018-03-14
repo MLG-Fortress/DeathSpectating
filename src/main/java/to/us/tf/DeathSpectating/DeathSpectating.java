@@ -67,7 +67,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @param spectate
      * */
-    public void setSpectating(Player player, boolean spectate, @Nullable GameMode gameMode)
+    public void setSpectating(Player player, boolean spectate, GameMode gameMode)
     {
         if (spectate)
         {
@@ -77,9 +77,12 @@ public class DeathSpectating extends JavaPlugin implements Listener
         }
         else
         {
+            if (gameMode == null && player.hasMetadata("DEAD"))
+                gameMode = (GameMode)player.getMetadata("DEAD").get(0).value();
             player.removeMetadata("DEAD", this);
-            player.setLastDamageCause(null);
-            player.setGameMode(getServer().getDefaultGameMode());
+            if (gameMode == null)
+                gameMode = getServer().getDefaultGameMode();
+            player.setGameMode(gameMode);
             player.setFlySpeed(0.1f);
         }
     }
@@ -105,31 +108,40 @@ public class DeathSpectating extends JavaPlugin implements Listener
             bedSpawn = false;
         }
 
-        //Refill health
-        player.setHealth(player.getMaxHealth());
-
-        //Refill food bar and saturation
-        player.setFoodLevel(20);
-        player.setSaturation(20f);
-
         //Indicate that we are doing the respawning (in case plugins want to know if this is a DeathSpectating respawn)
         player.setMetadata("DS_RESPAWN", new FixedMetadataValue(this, true));
 
         /*Fire PlayerRespawnEvent*/
+        //Player#isDead() == true when PlayerRespawnEvent is fired, hence why we do it now.
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(player, spawnLocation, bedSpawn);
         getServer().getPluginManager().callEvent(respawnEvent);
 
-        player.removeMetadata("DS_RESPAWN", this);
+        //CB calls entityPlayer#reset, so this is what we're mimicking
+
+        //Refill health
+        player.setHealth(player.getMaxHealth());
+        player.setFoodLevel(20);
+        player.setSaturation(5f);
+        player.setExhaustion(0);
+        player.setFireTicks(0);
+        player.setArrowsStuck(0);
+        player.setLastDamageCause(null);
+        for (PotionEffect potionEffect : player.getActivePotionEffects())
+            player.removePotionEffect(potionEffect.getType());
+        //Experience is handled in startDeathSpectating, especially since RespawnEvent contains no EXP data.
 
         /*undo spectating attributes*/
-        //Player#isDead() == true when PlayerRespawnEvent is fired.
-        //This is done before teleporting in case a teleport/worldchange event handler wants to set other gamemodes instead (like Multiverse)
+        //This is done before teleporting because:
+        //CB fires WorldChangedEvent after player.dead = false;
+        //in case a teleport/worldchange event handler wants to set other gamemodes instead (like Multiverse)
         //Oh, and also because the MiscListeners would cancel this teleport otherwise
-        setSpectating(player, false, null);
+        setSpectating(player, false, getServer().getDefaultGameMode());
 
         //Teleport player to event#getRespawnLocation
         //CB doesn't nullcheck it seems, so neither will I
-        player.teleport(respawnEvent.getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        //CB doesn't fire a teleport event (but does fire worldchange), so we'll just set cause as unknown
+        player.teleport(respawnEvent.getRespawnLocation(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+        player.removeMetadata("DS_RESPAWN", this);
         return true;
     }
 
@@ -170,12 +182,10 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 }
 
                 //Calculate and set experience to drop
-                expToDrop = SetExpFix.getTotalExperience(player);
-                if (expToDrop > 100)
-                    expToDrop = 100;
+                expToDrop = Math.min(100, SetExpFix.getTotalExperience(player));
             }
 
-            //TODO: Non-vanilla behavior, see issue #4
+            //TODO: Non-vanilla behavior: Unable to obtain death message to print. See issue #4
             String deathMessage = "";
 
             /*Prepare PlayerDeathEvent*/
@@ -184,7 +194,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             //And fire
             getServer().getPluginManager().callEvent(deathEvent);
 
-            //TODO: Non-vanilla behavior, see issue #5
+            //TODO: Non-vanilla behavior: scoreboard coloring of death message if unmodified. see issue #5
             //Print death message
             if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
@@ -253,7 +263,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     arrow.remove(); //Delete projectile
                 }
             }
-            if (killer == player) //Though we don't care if they did it themselves
+            if (killer == player) //Though we don't care if they did it themselves (don't count as player kill stat)
                 killer = null;
 
             //Increment player's ENTITY_KILLED_BY if killer is an entitytype recorded by this statistic

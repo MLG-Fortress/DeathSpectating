@@ -10,20 +10,21 @@ import to.us.tf.DeathSpectating.DeathSpectating;
 /**
  * Created on 4/10/2017.
  *
- * Primarily to repair cases when other plugins interfere with DeathSpectating (usually minigames)
+ * Primarily to repair cases when other plugins interfere with DeathSpectating
+ * (usually minigames firing player.spigot().respawn() and teleporting/setting stuff on player in death event?)
  *
  * @author RoboMWM
  */
 public class RespawnListener implements Listener
 {
-    DeathSpectating instance;
+    private DeathSpectating instance;
 
     public RespawnListener(DeathSpectating deathSpectating)
     {
         instance = deathSpectating;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     void onPlayerRespawns(PlayerRespawnEvent event)
     {
         Player player = event.getPlayer();
