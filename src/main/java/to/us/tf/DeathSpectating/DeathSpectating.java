@@ -120,14 +120,16 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         //Refill health
         player.setHealth(player.getMaxHealth());
+        player.setFireTicks(0);
+        player.setFallDistance(0);
         player.setFoodLevel(20);
         player.setSaturation(5f);
         player.setExhaustion(0);
-        player.setFireTicks(0);
         player.setArrowsStuck(0);
-        player.setLastDamageCause(null);
         for (PotionEffect potionEffect : player.getActivePotionEffects())
             player.removePotionEffect(potionEffect.getType());
+        player.closeInventory();
+        player.setLastDamageCause(null);
         //Experience is handled in startDeathSpectating, especially since RespawnEvent contains no EXP data.
 
         /*undo spectating attributes*/
