@@ -1,6 +1,7 @@
 package to.us.tf.DeathSpectating;
 
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -28,7 +29,6 @@ import to.us.tf.DeathSpectating.listeners.DamageListener;
 import to.us.tf.DeathSpectating.listeners.MiscListeners;
 import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -159,8 +159,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         try
         {
-            boolean keepInventory = Boolean.valueOf(player.getWorld().getGameRuleValue("keepInventory")) || player.getGameMode() == GameMode.SPECTATOR;
-            boolean showDeathMessages = Boolean.valueOf(player.getWorld().getGameRuleValue("showDeathMessages"));
+            boolean keepInventory = player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY) || player.getGameMode() == GameMode.SPECTATOR;
+            boolean showDeathMessages = player.getWorld().getGameRuleValue(GameRule.SHOW_DEATH_MESSAGES);
 
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.

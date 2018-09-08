@@ -4,6 +4,7 @@ version: ${project.version}
 main: to.us.tf.DeathSpectating.DeathSpectating
 website: https://github.com/MLG-Fortress/DeathSpectating/
 softdepend: [Multiverse-Core, MultiWorld]
+api-version: 1.13
 permissions:
     deathspectating.*:
         description: Grants ALL THE THINGS

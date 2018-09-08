@@ -42,7 +42,7 @@ public class DamageListener implements Listener
 
         //Ignore if player is holding a totem of undying
         PlayerInventory inventory = player.getInventory();
-        if (inventory.getItemInMainHand().getType() == Material.TOTEM || inventory.getItemInOffHand().getType() == Material.TOTEM)
+        if (inventory.getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING || inventory.getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING)
             return;
 
         //Ignore if this is probably the result of the Essentials suicide command
