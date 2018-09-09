@@ -1,4 +1,4 @@
-package to.us.tf.DeathSpectating.listeners;
+package com.robomwm.deathspectating.listeners;
 
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import to.us.tf.DeathSpectating.DeathSpectating;
+import com.robomwm.deathspectating.DeathSpectating;
 
 /**
  * Created on 2/15/2017.

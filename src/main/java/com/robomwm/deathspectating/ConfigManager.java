@@ -1,4 +1,4 @@
-package to.us.tf.DeathSpectating;
+package com.robomwm.deathspectating;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;

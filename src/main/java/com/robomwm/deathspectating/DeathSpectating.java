@@ -1,5 +1,9 @@
-package to.us.tf.DeathSpectating;
+package com.robomwm.deathspectating;
 
+import com.robomwm.deathspectating.events.DeathSpectatingEvent;
+import com.robomwm.deathspectating.listeners.DamageListener;
+import com.robomwm.deathspectating.listeners.MiscListeners;
+import com.robomwm.deathspectating.tasks.SpectateTask;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -24,10 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import to.us.tf.DeathSpectating.events.DeathSpectatingEvent;
-import to.us.tf.DeathSpectating.listeners.DamageListener;
-import to.us.tf.DeathSpectating.listeners.MiscListeners;
-import to.us.tf.DeathSpectating.tasks.SpectateTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;

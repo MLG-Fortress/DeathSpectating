@@ -1,11 +1,11 @@
-package to.us.tf.DeathSpectating.listeners;
+package com.robomwm.deathspectating.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import to.us.tf.DeathSpectating.DeathSpectating;
+import com.robomwm.deathspectating.DeathSpectating;
 
 /**
  * Created on 4/10/2017.

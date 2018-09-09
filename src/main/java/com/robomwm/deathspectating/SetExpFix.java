@@ -1,4 +1,4 @@
-package to.us.tf.DeathSpectating;
+package com.robomwm.deathspectating;
 
 /*
  * From https://github.com/drtshock/Essentials/blob/2.x/Essentials/src/com/earth2me/essentials/craftbukkit/SetExpFix.java

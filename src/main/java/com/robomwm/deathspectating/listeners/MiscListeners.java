@@ -1,4 +1,4 @@
-package to.us.tf.DeathSpectating.listeners;
+package com.robomwm.deathspectating.listeners;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,11 +12,10 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import to.us.tf.DeathSpectating.ConfigManager;
-import to.us.tf.DeathSpectating.DeathSpectating;
+import com.robomwm.deathspectating.ConfigManager;
+import com.robomwm.deathspectating.DeathSpectating;
 
 /**
  * Created on 2/15/2017.

@@ -1,4 +1,4 @@
-package to.us.tf.DeathSpectating.tasks;
+package com.robomwm.deathspectating.tasks;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import to.us.tf.DeathSpectating.DeathSpectating;
+import com.robomwm.deathspectating.DeathSpectating;
 
 import javax.annotation.Nullable;
 
