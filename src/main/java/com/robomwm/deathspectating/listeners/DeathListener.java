@@ -13,11 +13,11 @@ import com.robomwm.deathspectating.DeathSpectating;
  * Created on 2/15/2017.
  * @author RoboMWM
  */
-public class DamageListener implements Listener
+public class DeathListener implements Listener
 {
     private DeathSpectating plugin;
 
-    public DamageListener(DeathSpectating deathSpectating)
+    public DeathListener(DeathSpectating deathSpectating)
     {
         plugin = deathSpectating;
     }

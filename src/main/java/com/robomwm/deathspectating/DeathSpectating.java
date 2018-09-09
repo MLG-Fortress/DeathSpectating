@@ -1,7 +1,7 @@
 package com.robomwm.deathspectating;
 
 import com.robomwm.deathspectating.events.DeathSpectatingEvent;
-import com.robomwm.deathspectating.listeners.DamageListener;
+import com.robomwm.deathspectating.listeners.DeathListener;
 import com.robomwm.deathspectating.listeners.MiscListeners;
 import com.robomwm.deathspectating.tasks.SpectateTask;
 import org.bukkit.GameMode;
@@ -47,7 +47,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
     {
         configManager = new ConfigManager(this);
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
         getServer().getPluginManager().registerEvents(new MiscListeners(this), this);
     }
 
