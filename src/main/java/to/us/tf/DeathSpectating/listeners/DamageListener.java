@@ -1,15 +1,12 @@
 package to.us.tf.DeathSpectating.listeners;
 
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import to.us.tf.DeathSpectating.DeathSpectating;
 
 /**
@@ -18,44 +15,26 @@ import to.us.tf.DeathSpectating.DeathSpectating;
  */
 public class DamageListener implements Listener
 {
-    private DeathSpectating instance;
+    private DeathSpectating plugin;
 
     public DamageListener(DeathSpectating deathSpectating)
     {
-        instance = deathSpectating;
+        plugin = deathSpectating;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    void onPlayerBasicallyWouldBeDead(EntityDamageEvent event)
+    void onPlayerDies(PlayerDeathEvent event)
     {
-        if (event.getEntityType() != EntityType.PLAYER)
+        Player player = event.getEntity();
+
+        if (plugin.isSpectating(player))
             return;
 
-        Player player = (Player)event.getEntity();
-
-        if (!instance.getConfigManager().canSpectate(player, event.getCause()))
+        if (!plugin.getConfigManager().canSpectate(player, player.getLastDamageCause().getCause()))
             return;
-
-        //Ignore if player will survive this damage
-        if (player.getHealth() > event.getFinalDamage())
-            return;
-
-        //Ignore if player is holding a totem of undying
-        PlayerInventory inventory = player.getInventory();
-        if (inventory.getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING || inventory.getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING)
-            return;
-
-        //Ignore if this is probably the result of the Essentials suicide command
-        //Essentials will perform Player#setHealth(0), which does not fire a damage event, but does kill the player. This will lead to a double death message.
-        if ((event.getCause() == EntityDamageEvent.DamageCause.CUSTOM || event.getCause() == EntityDamageEvent.DamageCause.SUICIDE)
-                && event.getDamage() == Short.MAX_VALUE)
-            return;
-
-        player.setLastDamageCause(event);
-        //TODO: fire EntityResurrectEvent(?)
 
         /*Put player in death spectating mode*/
-        if (instance.startDeathSpectating(player))
+        if (plugin.startDeathSpectating(player))
         {
             //Cancel event so player doesn't actually die
             event.setCancelled(true);
@@ -63,6 +42,5 @@ public class DamageListener implements Listener
             //Play the "hit" sound (since we canceled the event, the hit sound will not play)
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, SoundCategory.PLAYERS, 1.0f, 1.0f);
         }
-
     }
 }
