@@ -34,7 +34,7 @@ public class DeathListener implements Listener
             return;
 
         /*Put player in death spectating mode*/
-        if (plugin.startDeathSpectating(player))
+        if (plugin.startDeathSpectating(player, event))
         {
             //Cancel event so player doesn't actually die
             event.setCancelled(true);

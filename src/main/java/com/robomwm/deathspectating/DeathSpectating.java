@@ -152,14 +152,14 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @return if player was put in death spectating mode
      */
-    public boolean startDeathSpectating(Player player)
+    public boolean startDeathSpectating(Player player, PlayerDeathEvent deathEvent)
     {
         if (isSpectating(player))
             return false;
 
         try
         {
-            boolean keepInventory = player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY) || player.getGameMode() == GameMode.SPECTATOR;
+            boolean keepInventory = deathEvent.getKeepInventory() || player.getGameMode() == GameMode.SPECTATOR;
             boolean showDeathMessages = player.getWorld().getGameRuleValue(GameRule.SHOW_DEATH_MESSAGES);
 
             /*Set spectating attributes*/
@@ -187,16 +187,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 expToDrop = Math.min(100, SetExpFix.getTotalExperience(player));
             }
 
-            //TODO: Non-vanilla behavior: Unable to obtain death message to print. See issue #4
-            String deathMessage = "";
-
-            /*Prepare PlayerDeathEvent*/
-            PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, deathMessage);
-            deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
-            //And fire
-            getServer().getPluginManager().callEvent(deathEvent);
-
-            //TODO: Non-vanilla behavior: scoreboard coloring of death message if unmodified. see issue #5
+            //TODO: Non-vanilla behavior: scoreboard coloring of death message if unmodified. see issue #5 //May not apply anymore though.
             //Print death message
             if (deathEvent.getDeathMessage() != null && !deathEvent.getDeathMessage().isEmpty() && showDeathMessages)
                 getServer().broadcastMessage(deathEvent.getDeathMessage());
@@ -233,14 +224,13 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.incrementStatistic(Statistic.DEATHS);
             player.setStatistic(Statistic.TIME_SINCE_DEATH, 0);
 
-            //Clear potion effects TODO: do this before firing death event?
+            //Clear potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
 
             //TODO: Non-vanilla behavior: Player death animation (red and falling over) (Issue #13)
-            //Smoke effect //TODO: after 20 ticks (Issue #14) (Will implement 20 tick delay after issue #13 is resolved
-            if (isSpectating(player)) //TODO: does smoke effect/death animation occur if player#spigot()#respawn() is called on death? My guess is no.
-                player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0.001);
+            //Smoke effect //TODO: after 20 ticks (Issue #14) Will implement 20 tick delay after issue #13 is resolved
+            player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 25, 1, 0.5, 1, 0.001);
 
             //Play the "death" sound (to all other players except the killed player; vanilla (spigot?) behavior).
             //fyi, default resource pack doesn't have a different sound for this; only custom resource packs make use of this.
@@ -262,7 +252,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
                     Projectile arrow = (Projectile) killer;
                     if (arrow.getShooter() instanceof LivingEntity)
                         killer = (Entity) arrow.getShooter();
-                    arrow.remove(); //Delete projectile
                 }
             }
             if (killer == player) //Though we don't care if they did it themselves (don't count as player kill stat)
