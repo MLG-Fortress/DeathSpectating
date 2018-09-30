@@ -1,7 +1,7 @@
 name: DeathSpectating
 author: RoboMWM
 version: ${project.version}
-main: com.robomwm.deathspectating
+main: com.robomwm.deathspectating.DeathSpectating
 website: https://github.com/MLG-Fortress/DeathSpectating/
 softdepend: [Multiverse-Core, MultiWorld]
 api-version: 1.13
