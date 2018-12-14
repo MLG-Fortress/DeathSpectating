@@ -26,8 +26,10 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,6 +47,38 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
     public void onEnable()
     {
+        try
+        {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+        }
+        catch (Throwable cue)
+        {
+            getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
+            getLogger().info(" ");
+            getLogger().warning("This plugin only works on Paper");
+            getLogger().warning("(Or any fork of Bukkit that allows you to cancel PlayerDeathEvent.)");
+            getLogger().warning("Learn and get Paper (it's ez) at https://papermc.io");
+            getLogger().info(" ");
+            getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
+            Plugin plugin = this;
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
+                    getLogger().info(" ");
+                    getLogger().warning("This plugin only works on Paper");
+                    getLogger().warning("(Or any fork of Bukkit that allows you to cancel PlayerDeathEvent.)");
+                    getLogger().warning("Learn and get Paper (it's ez) at https://papermc.io");
+                    getLogger().info(" ");
+                    getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
+                    getPluginLoader().disablePlugin(plugin);
+                }
+            }.runTaskLater(this, 100L);
+            return;
+        }
+
         configManager = new ConfigManager(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
