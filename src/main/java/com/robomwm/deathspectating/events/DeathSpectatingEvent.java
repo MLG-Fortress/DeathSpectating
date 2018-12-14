@@ -21,7 +21,7 @@ public class DeathSpectatingEvent extends Event
         return handlers;
     }
 
-    SpectateTask spectateTask;
+    private SpectateTask spectateTask;
 
     public DeathSpectatingEvent(SpectateTask task)
     {

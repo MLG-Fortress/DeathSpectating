@@ -137,7 +137,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         //CB fires WorldChangedEvent after player.dead = false;
         //in case a teleport/worldchange event handler wants to set other gamemodes instead (like Multiverse)
         //Oh, and also because the MiscListeners would cancel this teleport otherwise
-        setSpectating(player, false, getServer().getDefaultGameMode());
+        setSpectating(player, false, getConfigManager().gameModeToRespawnWith());
 
         //Teleport player to event#getRespawnLocation
         //CB doesn't nullcheck it seems, so neither will I

@@ -13,6 +13,8 @@ import com.robomwm.deathspectating.DeathSpectating;
  * Primarily to repair cases when other plugins interfere with DeathSpectating
  * (usually minigames firing player.spigot().respawn() and teleporting/setting stuff on player in death event?)
  *
+ * TODO: I don't think this is needed anymore...?
+ *
  * @author RoboMWM
  */
 public class RespawnListener implements Listener

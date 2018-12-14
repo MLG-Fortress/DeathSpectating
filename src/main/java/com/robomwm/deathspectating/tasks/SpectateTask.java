@@ -118,6 +118,7 @@ public class SpectateTask extends BukkitRunnable
             return;
         }
 
+        //update title every ten ticks, if a title exists.
         if (ticks % 10 == 0 && !(unformattedTitle.isEmpty() && unformattedSubTitle.isEmpty()))
         {
             int seconds = (int)ticks / 20;

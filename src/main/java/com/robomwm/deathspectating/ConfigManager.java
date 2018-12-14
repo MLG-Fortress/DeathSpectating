@@ -1,6 +1,7 @@
 package com.robomwm.deathspectating;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created on 2/16/2017.
  *
+ * I've learned my lesson and will use enums for the next config class or something.
+ *
  * @author RoboMWM
  */
 public class ConfigManager
@@ -33,6 +36,7 @@ public class ConfigManager
     private Set<String> whitelistedCommands = new HashSet<>();
     private Set<EntityDamageEvent.DamageCause> blacklistedDamageCauses = new HashSet<>();
     private boolean usePermissionForSpectating = false;
+    private boolean respawnWithServerDefaultGamemode = true;
 
 
     ConfigManager(DeathSpectating deathSpectating)
@@ -41,6 +45,7 @@ public class ConfigManager
         config = instance.getConfig();
         config.addDefault("respawnTimeInSeconds", 8);
         config.addDefault("usePermissionForSpectating", false);
+        config.addDefault("respawnWithServerDefaultGamemode", true);
         config.addDefault("useDamageCauseBlacklist", true);
         List<String> dCBL = new ArrayList<>(Arrays.asList("SUFFOCATION"));
         config.addDefault("damageCauseBlacklist", dCBL);
@@ -55,6 +60,7 @@ public class ConfigManager
         instance.saveConfig();
 
         respawnTicks = (long)((config.getDouble("respawnTimeInSeconds") * 20L));
+        respawnWithServerDefaultGamemode = config.getBoolean("respawnWithServerDefaultGamemode", true);
         usePermissionForSpectating = config.getBoolean("usePermissionForSpectating");
         if (config.getBoolean("useDamageCauseBlacklist"))
         {
@@ -157,6 +163,13 @@ public class ConfigManager
     public String formatter(String stringToFormat)
     {
         return ChatColor.translateAlternateColorCodes('&', stringToFormat);
+    }
+
+    public GameMode gameModeToRespawnWith()
+    {
+        if (respawnWithServerDefaultGamemode)
+            return instance.getServer().getDefaultGameMode();
+        return null;
     }
 
     /*Private methods, for now*/

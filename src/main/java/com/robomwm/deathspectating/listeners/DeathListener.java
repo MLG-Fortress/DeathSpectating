@@ -33,6 +33,9 @@ public class DeathListener implements Listener
         if (!plugin.getConfigManager().canSpectate(player, player.getLastDamageCause().getCause()))
             return;
 
+        if (event.getEntity().hasMetadata("NPC"))
+            return;
+
         /*Put player in death spectating mode*/
         if (plugin.startDeathSpectating(player, event))
         {
