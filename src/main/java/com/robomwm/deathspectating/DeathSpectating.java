@@ -12,7 +12,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.Statistic;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -26,10 +25,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,38 +44,6 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
     public void onEnable()
     {
-        try
-        {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-        }
-        catch (Throwable cue)
-        {
-            getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
-            getLogger().info(" ");
-            getLogger().warning("This plugin only works on Paper");
-            getLogger().warning("(Or any fork of Bukkit that allows you to cancel PlayerDeathEvent.)");
-            getLogger().warning("Learn and get Paper (it's ez) at https://papermc.io");
-            getLogger().info(" ");
-            getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
-            Plugin plugin = this;
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
-                    getLogger().info(" ");
-                    getLogger().warning("This plugin only works on Paper");
-                    getLogger().warning("(Or any fork of Bukkit that allows you to cancel PlayerDeathEvent.)");
-                    getLogger().warning("Learn and get Paper (it's ez) at https://papermc.io");
-                    getLogger().info(" ");
-                    getLogger().info(" = = = = = = = = = = = = = = = = = = = =");
-                    getPluginLoader().disablePlugin(plugin);
-                }
-            }.runTaskLater(this, 100L);
-            return;
-        }
-
         configManager = new ConfigManager(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
@@ -152,18 +117,18 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         //CB calls entityPlayer#reset, so this is what we're mimicking
 
-        //Refill health
-        player.setHealth(player.getMaxHealth());
-        player.setFireTicks(0);
-        player.setFallDistance(0);
-        player.setFoodLevel(20);
+        player.setHealth(player.getMaxHealth()); //literally same line
+        player.setFireTicks(0); //fireTicks = 0
+        player.setFallDistance(0); //fallDistance = 0
+        player.setFoodLevel(20); //foodData = new FoodMetaData(this)
         player.setSaturation(5f);
         player.setExhaustion(0);
-        player.setArrowsStuck(0);
+        player.setTicksLived(0); //deathTicks = 0
+        player.setArrowsStuck(0); //setArrowCount(0)
         for (PotionEffect potionEffect : player.getActivePotionEffects())
             player.removePotionEffect(potionEffect.getType());
         player.closeInventory();
-        player.setLastDamageCause(null);
+        player.setLastDamageCause(null); //combatTracker = new CombatTracker(this)
         //Experience is handled in startDeathSpectating, especially since RespawnEvent contains no EXP data.
 
         /*undo spectating attributes*/
@@ -211,11 +176,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (!keepInventory)
             {
                 //Compile a list of null-free/air-free items to drop
-                for (ItemStack itemStack : player.getInventory().getContents())
-                {
-                    if (itemStack != null && itemStack.getType() != Material.AIR && !itemStack.containsEnchantment(Enchantment.VANISHING_CURSE))
-                        itemsToDrop.add(itemStack);
-                }
+
 
                 //Calculate and set experience to drop
                 expToDrop = Math.min(100, SetExpFix.getTotalExperience(player));
@@ -230,6 +191,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
             if (!deathEvent.getKeepInventory())
             {
                 player.getInventory().clear();
+
+                //drop items
                 for (ItemStack itemStack : deathEvent.getDrops())
                 {
                     if (itemStack != null && itemStack.getType() != Material.AIR)
@@ -237,6 +200,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
                 }
 
                 //Clear and set experience, if getKeepLevel() == false
+                //Note that Exp is kept if either keepLevel _or_ keepInventory is true
+                //Technically this is done on respawn, but PlayerRespawnEvent doesn't carry this info - CB stores the `keepLevel` boolean in the Player object apparently?
                 if (!deathEvent.getKeepLevel())
                 {
                     SetExpFix.setTotalExperience(player, 0);
@@ -247,6 +212,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             }
 
             //Close any inventory the player may be viewing
+            //CB checks to see if player is currently viewing another inventory on death before attempting to close on the player. I'm assuming it will do this check with this Bukkit call though.
             player.closeInventory();
             player.setSpectatorTarget(player); //Remove spectated target
 
