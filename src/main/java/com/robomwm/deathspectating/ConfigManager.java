@@ -30,13 +30,13 @@ public class ConfigManager
 {
     private DeathSpectating instance;
     private FileConfiguration config;
-    private long respawnTicks = 160L; //8 seconds
+    private long respawnTicks;
     private Map<String, String> messages = new HashMap<>();
     private Set<World> whitelistedWorlds = new HashSet<>();
     private Set<String> whitelistedCommands = new HashSet<>();
     private Set<EntityDamageEvent.DamageCause> blacklistedDamageCauses = new HashSet<>();
-    private boolean usePermissionForSpectating = false;
-    private boolean respawnWithServerDefaultGamemode = true;
+    private boolean usePermissionForSpectating;
+    private boolean respawnWithServerDefaultGamemode;
 
 
     ConfigManager(DeathSpectating deathSpectating)
