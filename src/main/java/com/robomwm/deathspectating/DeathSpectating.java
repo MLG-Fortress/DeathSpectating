@@ -117,19 +117,26 @@ public class DeathSpectating extends JavaPlugin implements Listener
 
         //CB calls entityPlayer#reset, so this is what we're mimicking
 
-        player.setHealth(player.getMaxHealth()); //literally same line
-        player.setFireTicks(0); //fireTicks = 0
-        player.setFallDistance(0); //fallDistance = 0
-        player.setFoodLevel(20); //foodData = new FoodMetaData(this)
-        player.setSaturation(5f);
-        player.setExhaustion(0);
-        player.setTicksLived(0); //deathTicks = 0
-        player.setArrowsStuck(0); //setArrowCount(0)
-        for (PotionEffect potionEffect : player.getActivePotionEffects())
-            player.removePotionEffect(potionEffect.getType());
-        player.closeInventory();
-        player.setLastDamageCause(null); //combatTracker = new CombatTracker(this)
-        //Experience is handled in startDeathSpectating, especially since RespawnEvent contains no EXP data.
+        try
+        {
+            player.setHealth(player.getMaxHealth()); //literally same line
+            player.setFireTicks(0); //fireTicks = 0
+            player.setFallDistance(0); //fallDistance = 0
+            player.setFoodLevel(20); //foodData = new FoodMetaData(this)
+            player.setSaturation(5f);
+            player.setExhaustion(0);
+            player.setTicksLived(1); //deathTicks = 0, but this must be at least 1. So maybe this refers to something else...
+            player.setArrowsStuck(0); //setArrowCount(0)
+            for (PotionEffect potionEffect : player.getActivePotionEffects())
+                player.removePotionEffect(potionEffect.getType());
+            player.closeInventory();
+            player.setLastDamageCause(null); //combatTracker = new CombatTracker(this)
+            //Experience is handled in startDeathSpectating, especially since RespawnEvent contains no EXP data.
+        }
+        catch (Throwable rock)
+        {
+            rock.printStackTrace();
+        }
 
         /*undo spectating attributes*/
         //This is done before teleporting because:
