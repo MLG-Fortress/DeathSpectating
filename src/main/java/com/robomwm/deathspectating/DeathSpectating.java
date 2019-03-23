@@ -66,12 +66,17 @@ public class DeathSpectating extends JavaPlugin implements Listener
      * @param player
      * @param spectate
      * */
-    public void setSpectating(Player player, boolean spectate, GameMode gameMode)
+    public boolean setSpectating(Player player, boolean spectate, GameMode gameMode)
     {
         if (spectate)
         {
-            player.setMetadata("DEAD", new FixedMetadataValue(this, gameMode));
             player.setGameMode(GameMode.SPECTATOR);
+            if (player.getGameMode() != GameMode.SPECTATOR)
+            {
+                getLogger().warning("Another plugin prevented the player from entering the spectator gamemode!");
+                return false;
+            }
+            player.setMetadata("DEAD", new FixedMetadataValue(this, gameMode));
             player.setFlySpeed(0.0f);
         }
         else
@@ -84,6 +89,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.setGameMode(gameMode);
             player.setFlySpeed(0.1f);
         }
+        return true;
     }
 
     public boolean respawnPlayer(Player player)
@@ -171,7 +177,8 @@ public class DeathSpectating extends JavaPlugin implements Listener
             /*Set spectating attributes*/
             //Player#isDead() == true when PlayerDeathEvent is fired.
             //Also prevents any potential to pickup anything that's dropped.
-            setSpectating(player, true, player.getGameMode());
+            if (!setSpectating(player, true, player.getGameMode()))
+                return false;
 
             /*Start Death Event simulation*/
 
