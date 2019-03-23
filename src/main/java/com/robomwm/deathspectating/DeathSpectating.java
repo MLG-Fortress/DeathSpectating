@@ -303,6 +303,7 @@ public class DeathSpectating extends JavaPlugin implements Listener
         catch (Exception e)
         {
             getLogger().log(Level.SEVERE, "An error occurred while trying to start death spectating for " + player.getName());
+            getLogger().log(Level.SEVERE, "DeathSpectating v" + getDescription().getVersion() + " running on " + getServer().getVersion());
             getLogger().log(Level.SEVERE, "Report the following stacktrace in full:\n");
             e.printStackTrace();
             setSpectating(player, false, null);
