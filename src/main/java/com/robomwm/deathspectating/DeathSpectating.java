@@ -132,7 +132,11 @@ public class DeathSpectating extends JavaPlugin implements Listener
             player.setSaturation(5f);
             player.setExhaustion(0);
             player.setTicksLived(1); //deathTicks = 0, but this must be at least 1. So maybe this refers to something else...
-            player.setArrowsStuck(0); //setArrowCount(0)
+            try
+            {
+                player.setArrowsStuck(0); //setArrowCount(0) //paper only
+            }
+            catch (Throwable ignored){}
             for (PotionEffect potionEffect : player.getActivePotionEffects())
                 player.removePotionEffect(potionEffect.getType());
             player.closeInventory();
