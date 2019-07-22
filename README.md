@@ -1,9 +1,13 @@
 # DeathSpectating
 When a player dies, they will "watch" ("spectate") their killer the moment they die for a brief period of time before respawning. This is similar to most FPS games.
 
-[Documentation](https://github.com/MLG-Fortress/DeathSpectating/wiki) | [Issues](https://github.com/MLG-Fortress/DeathSpectating/issues) | [Addons](https://github.com/MLG-Fortress/DeathSpectating/wiki/Addons) | [![Downloads](https://img.shields.io/github/downloads/MLG-Fortress/DeathSpectating/total.svg)](https://github.com/MLG-Fortress/DeathSpectating/releases)
+Project page + downloads: https://dev.bukkit.org/projects/deathspectating
+
+[Documentation](../wiki) | [Issues](../issues)
 
 [![DeathSpectating demonstration video](http://img.youtube.com/vi/cFgPumDLi1c/0.jpg)](https://www.youtube.com/watch?v=cFgPumDLi1c)
+
+https://www.youtube.com/watch?v=cFgPumDLi1c
 
 Players in death spectating mode will not be able to move or do anything other than spectate at their death location (duh), chat, and use a set of commands that you allow (such as /me, /msg, etc.)
 
