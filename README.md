@@ -3,7 +3,7 @@ When a player dies, they will "watch" ("spectate") their killer the moment they 
 
 Project page + downloads: https://dev.bukkit.org/projects/deathspectating
 
-[Documentation](../wiki) | [Issues](../issues)
+[Documentation](../../wiki) | [Issues](../../issues) | [Support the developer](https://r.robomwm.com/patreon)
 
 [![DeathSpectating demonstration video](http://img.youtube.com/vi/cFgPumDLi1c/0.jpg)](https://www.youtube.com/watch?v=cFgPumDLi1c)
 
