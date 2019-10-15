@@ -1,10 +1,10 @@
 name: DeathSpectating
 author: RoboMWM
-version: ${project.version}
+version: '${project.version}-${git.commit.id.abbrev}'
 main: com.robomwm.deathspectating.DeathSpectating
 website: https://github.com/MLG-Fortress/DeathSpectating/
 softdepend: [Multiverse-Core, MultiWorld]
-api-version: 1.13
+api-version: '1.13'
 permissions:
     deathspectating.*:
         description: Grants ALL THE THINGS

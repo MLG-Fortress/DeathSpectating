@@ -60,6 +60,8 @@ public class DeathListener implements Listener
         if (plugin.isSpectating(player))
             return;
 
+        if (player.getLastDamageCause() == null) //plugin-caused death
+            return;
         if (!plugin.getConfigManager().canSpectate(player, player.getLastDamageCause().getCause()))
             return;
 
