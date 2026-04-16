@@ -18,6 +18,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import com.robomwm.deathspectating.DeathSpectating;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,8 +135,7 @@ public class DeathListener implements Listener
         }
 
         /*Prepare PlayerDeathEvent*/
-        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, itemsToDrop, expToDrop, "");
-        deathEvent.setKeepInventory(keepInventory); //CB's constructor does indeed set whether the inventory is kept or not, using the gamerule's value
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, DamageSource.builder(DamageType.GENERIC).build(), itemsToDrop, expToDrop, Component.text(""), keepInventory);
         //And fire
         plugin.getServer().getPluginManager().callEvent(deathEvent);
 
