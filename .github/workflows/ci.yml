@@ -1,0 +1,52 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  pull_request:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build and Test
+        run: mvn --batch-mode clean verify
+
+      - name: Get short SHA
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "SHORT_SHA=\${GITHUB_SHA::7}" >> \$GITHUB_ENV
+
+      - name: Extract Final Artifact Name from POM
+        if: startsWith(github.ref, 'refs/tags/')
+        id: pom-info
+        # help:evaluate safely extracts the exact <finalName> from pom.xml
+        run: |
+          FINAL_NAME=\$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
+          echo "JAR_NAME=\${FINAL_NAME}" >> \$GITHUB_ENV
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: \${{ github.ref_name }}
+          name: Release \${{ github.ref_name }}-\${{ env.SHORT_SHA }}
+          body: |
+            Automated release for version \${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: target/\${{ env.JAR_NAME }}.jar
