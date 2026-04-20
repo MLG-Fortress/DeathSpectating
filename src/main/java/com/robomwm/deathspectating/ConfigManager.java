@@ -79,13 +79,26 @@ public class ConfigManager
         }
         if (config.getBoolean("useWorldWhitelist"))
         {
+            List<String> validWorlds = new ArrayList<>();
+            boolean removedInvalidWorlds = false;
             for (String worldName : config.getStringList("worldWhitelist"))
             {
                 World world = instance.getServer().getWorld(worldName);
                 if (world == null)
-                    instance.getLogger().warning("World " + worldName + " does not exist. We advise removing this from the worldWhitelist in the config for DeathSpectating");
+                {
+                    removedInvalidWorlds = true;
+                    instance.getLogger().info("Removing missing world from worldWhitelist: " + worldName);
+                }
                 else
+                {
                     whitelistedWorlds.add(world);
+                    validWorlds.add(worldName);
+                }
+            }
+            if (removedInvalidWorlds)
+            {
+                config.set("worldWhitelist", validWorlds);
+                instance.saveConfig();
             }
         }
         for (String command : config.getStringList("commandWhitelist"))
