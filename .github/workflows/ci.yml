@@ -9,6 +9,8 @@ on:
 
 jobs:
   ci:
+    permissions:
+      contents: write
     uses: MLG-Fortress/.github/.github/workflows/maven-ci.yml@master
     with:
       java-version: '25'
